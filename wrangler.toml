@@ -4,4 +4,4 @@ main = "functions/api/products.js"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "store-db"
+database_name = "china-db"
