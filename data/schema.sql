@@ -1,5 +1,4 @@
-﻿-- جدول المنتجات (كما هو موجود)
-CREATE TABLE IF NOT EXISTS products (
+﻿CREATE TABLE IF NOT EXISTS products (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   brand TEXT,
@@ -8,21 +7,20 @@ CREATE TABLE IF NOT EXISTS products (
   stock INTEGER DEFAULT 0,
   image_url TEXT,
   description TEXT,
-  created_at TEXT DEFAULT (datetime(''now''))
+  is_hidden INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
--- جدول الطلبات (كما هو موجود)
 CREATE TABLE IF NOT EXISTS orders (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   customer_name TEXT NOT NULL,
   customer_phone TEXT NOT NULL,
   customer_address TEXT,
   total REAL NOT NULL,
-  status TEXT DEFAULT ''pending'',
-  created_at TEXT DEFAULT (datetime(''now''))
+  status TEXT DEFAULT 'pending',
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
--- جدول عناصر الطلب (كما هو موجود)
 CREATE TABLE IF NOT EXISTS order_items (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   order_id INTEGER NOT NULL,
@@ -33,9 +31,8 @@ CREATE TABLE IF NOT EXISTS order_items (
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
--- 🆕 جدول الإعدادات (للوحة الإدارة + QR شام كاش)
 CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
   value TEXT,
-  updated_at TEXT DEFAULT (datetime(''now''))
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
