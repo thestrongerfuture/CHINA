@@ -1592,3 +1592,32 @@ body {
 body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a {
   font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif !important;
 }
+
+/* ============================================================
+   تعديل الشريط السفلي لتجنب تداخل زر الواتساب العائم
+   ============================================================ */
+
+/* 1. على الكمبيوتر (شاشات كبيرة): تقصير الشريط من اليسار */
+@media (min-width: 769px) {
+  .bottom-nav {
+    left: 100px !important; /* ترك مساحة لزر الواتساب */
+    right: 16px !important; /* الحفاظ على الهامش الأيمن */
+    margin: 0 0 16px 0 !important;
+    border-radius: 999px !important; /* إبقاء الشكل الكبسولة */
+  }
+}
+
+/* 2. على الموبايل (شاشات صغيرة): تقصير الشريط أيضاً */
+@media (max-width: 768px) {
+  .bottom-nav {
+    left: 80px !important; /* ترك مساحة لزر الواتساب */
+    right: 8px !important;
+    margin: 0 0 12px 0 !important;
+    border-radius: 16px !important;
+  }
+}
+
+/* 3. التأكد من أن زر الواتساب فوق الشريط السفلي */
+.floating-whatsapp {
+  z-index: 1001 !important; /* أعلى من الشريط السفلي */
+}
