@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>العروض | شركة المستقبل الأقوى</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .page-header { text-align: center; padding: 30px 0 20px; }
+    .page-header h1 { color: var(--primary); font-size: 1.8rem; }
+    .page-header p { color: var(--text-muted); margin-top: 5px; }
+    .offers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding-bottom: 80px; }
+    
+    .offer-card-client {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #f0f0f0;
+    }
+    .offer-image { width: 100%; height: 200px; object-fit: contain; background: #f9fafb; padding: 10px; }
+    .offer-body { padding: 15px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .offer-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+    .offer-details { font-size: 0.9rem; color: var(--text-muted); }
+    .offer-price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; border-top: 1px solid #eee; padding-top: 10px; }
+    .offer-old-price { text-decoration: line-through; color: #999; font-size: 0.85rem; }
+    .offer-new-price { color: #10b981; font-size: 1.4rem; font-weight: 800; }
+    .offer-badge { background: #10b981; color: #fff; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; width: fit-content; }
+    .btn-add-offer { background: var(--primary); color: #fff; padding: 10px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; transition: all 0.2s; }
+    .btn-add-offer:hover { background: var(--primary-dark); }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand">
+        <img src="/images/logo.png" alt="شعار" class="brand-logo">
+        <div class="brand-text">
+          <span class="ar">شركة المستقبل الأقوى</span>
+          <span class="en">متجر الصين</span>
+        </div>
+      </a>
+      <div class="header-actions">
+        <a href="/cart.html" class="icon-btn" style="background: #fff; color: #0040C0; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: 700;">
+          🛒 <span>السلة</span>
+          <span class="cart-badge" id="cartBadge" style="background: #0040C0; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; margin-right: 4px;">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+    <div class="page-header">
+      <h1>🏷️ العروض المتاحة</h1>
+      <p>عروض حصرية لفترة محدودة، لا تفوتها!</p>
+    </div>
+
+    <div id="loading" class="loading">⏳ جاري تحميل العروض...</div>
+    <div id="emptyState" class="empty-state hidden">
+      <div class="emoji">🏷️</div>
+      <p>لا توجد عروض حالياً</p>
+    </div>
+    <div class="offers-grid" id="offersGrid"></div>
+  </main>
+
+  <!-- ============ BOTTOM NAVIGATION ============ -->
+  <nav class="bottom-nav">
+    <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></a>
+    <a href="/offers.html" class="nav-item active"><span class="nav-icon">🏷️</span><span class="nav-label">العروض</span></a>
+    <a href="/new.html" class="nav-item"><span class="nav-icon">✨</span><span class="nav-label">جديدنا</span></a>
+  </nav>
+
+  <!-- ============ FLOATING WHATSAPP ============ -->
+  <a href="https://chat.whatsapp.com/KZf6brYjicuGDrqIsiV7Ft" target="_blank" rel="noopener" class="floating-whatsapp">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+    <span class="wa-tooltip">الانضمام لمجتمع الشركة</span>
+  </a>
+
+  <script>
+    const CART_KEY = 'tsf_cart';
+    function loadCart() { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+    function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartBadge(); }
+    function updateCartBadge() {
+      const total = loadCart().reduce((s, i) => s + i.quantity, 0);
+      document.getElementById('cartBadge').textContent = total;
+      document.getElementById('cartBadge').style.display = total > 0 ? 'inline-flex' : 'none';
+    }
+    function addToCart(product, quantity) {
+      const cart = loadCart();
+      const productId = Number(product.id);
+      const existing = cart.find(i => Number(i.id) === productId);
+      if (existing) { existing.quantity = Math.min(existing.quantity + quantity, product.stock); }
+      else { cart.push({ id: productId, name: product.name, price: Number(product.price), stock: Number(product.stock), quantity }); }
+      saveCart(cart);
+      alert(`✅ تمت إضافة ${quantity} × ${product.name} للسلة`);
+    }
+
+    // جلب العروض
+    async function loadOffers() {
+      try {
+        const res = await fetch('/api/offers');
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error);
+
+        const grid = document.getElementById('offersGrid');
+        const loading = document.getElementById('loading');
+        const empty = document.getElementById('emptyState');
+        loading.classList.add('hidden');
+
+        if (data.offers.length === 0) {
+          empty.classList.remove('hidden');
+          return;
+        }
+
+        data.offers.forEach(o => {
+          const card = document.createElement('div');
+          card.className = 'offer-card-client';
+          card.innerHTML = `
+            <img src="/images/products/${o.product_id}.png" class="offer-image" onerror="this.src='/images/logo.png'">
+            <div class="offer-body">
+              <span class="offer-badge">🔥 عرض خاص</span>
+              <div class="offer-title">${o.title}</div>
+              <div class="offer-details">الكمية: ${o.quantity} قطعة</div>
+              <div class="offer-price-row">
+                <div>
+                  <div class="offer-old-price">$${Number(o.original_price * o.quantity).toFixed(2)}</div>
+                  <div class="offer-new-price">$${Number(o.offer_price).toFixed(2)}</div>
+                </div>
+                <div style="font-size:0.8rem; color:#10b981; font-weight:700;">وفّر ${((1 - (o.offer_price / (o.original_price * o.quantity))) * 100).toFixed(0)}%</div>
+              </div>
+              <button class="btn-add-offer" onclick="addToCart({id: ${o.product_id}, name: '${o.product_name}', price: ${o.offer_price / o.quantity}, stock: ${o.product_stock}}, ${o.quantity})">🛒 أضف العرض للسلة</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+      } catch (err) {
+        document.getElementById('loading').textContent = '❌ خطأ: ' + err.message;
+      }
+    }
+
+    updateCartBadge();
+    loadOffers();
+  </script>
+</body>
+</html>
