@@ -1718,3 +1718,77 @@ body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a {
     order: 4 !important; /* يظهر بعد الأزرار والرقم */
   }
 }
+
+/* ============================================================
+   الحل النهائي: النافذة المنبثقة (لا تداخل + حواف دائرية)
+   ============================================================ */
+
+/* 1. ضبط النافذة: ارتفاع مناسب، مسافة سفلية، وحواف دائرية */
+.product-modal-content {
+  max-height: 80vh !important; /* ارتفاع مناسب */
+  overflow-y: auto !important; /* تمرير داخلي (بعجلة الماوس) */
+  padding: 20px !important;
+  margin-bottom: 100px !important; /* مسافة سفلية لتجنب الشريط السفلي */
+  border-radius: 20px !important; /* حواف دائرية من كل الجهات */
+  background: #fff !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+  
+  /* إخفاء شريط التمرير (مع الحفاظ على إمكانية التمرير) */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* Edge/IE */
+}
+
+/* إخفاء شريط التمرير في كروم وسفاري */
+.product-modal-content::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* 2. التأكد من أن الحواف اليسرى دائرية */
+.product-modal-content {
+  border-top-left-radius: 20px !important;
+  border-bottom-left-radius: 20px !important;
+}
+
+/* 3. تصغير الصورة قليلاً لتناسب */
+.pm-image-wrap {
+  height: 180px !important;
+  max-height: 180px !important;
+  border-radius: 12px !important;
+}
+
+/* 4. على الموبايل: تعديل إضافي */
+@media (max-width: 768px) {
+  .product-modal-content {
+    max-height: 75vh !important;
+    padding: 16px !important;
+    margin-bottom: 110px !important; /* مسافة أكبر لتجنب الشريط السفلي */
+  }
+  .pm-image-wrap {
+    height: 140px !important;
+    max-height: 140px !important;
+  }
+}
+
+/* ============================================================
+   ضمان عمل عجلة الماوس داخل النافذة المنبثقة
+   ============================================================ */
+
+.product-modal-content {
+  overflow-y: auto !important;
+  /* إخفاء شريط التمرير */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.product-modal-content::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* التأكد من أن العناصر الداخلية لا تمنع تمرير العجلة */
+.product-modal-content * {
+  pointer-events: auto !important;
+}
+
+/* منع التمرير في الصفحة الخلفية عند تمرير العجلة داخل النافذة */
+body.modal-open {
+  overflow: hidden !important;
+}

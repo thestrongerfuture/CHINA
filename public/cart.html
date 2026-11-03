@@ -140,6 +140,9 @@
 
   <script>
     const CART_KEY = 'tsf_cart';
+    const urlParams = new URLSearchParams(window.location.search);
+    const editOrderId = urlParams.get('edit_order');
+    const isEditMode = !!editOrderId;
     const loadCart = () => JSON.parse(localStorage.getItem(CART_KEY) || '[]');
     const saveCart = (c) => localStorage.setItem(CART_KEY, JSON.stringify(c));
 
@@ -301,7 +304,31 @@
       }
     };
 
-    renderCart();
+    if (isEditMode) {
+      fetch(`/api/orders?id=${editOrderId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok && data.order) {
+            const cart = data.order.items.map(i => ({
+              id: i.product_id,
+              name: i.name,
+              price: i.price,
+              stock: 9999,
+              quantity: i.quantity
+            }));
+            saveCart(cart);
+            renderCart();
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.textContent = 'حفظ التعديلات';
+            document.getElementById('customerName').value = data.order.customer_name;
+            document.getElementById('customerPhone').value = data.order.customer_phone;
+            document.getElementById('customerAddress').value = data.order.customer_address || '';
+          }
+        })
+        .catch(err => console.error('خطأ في تحميل الطلب:', err));
+    } else {
+      renderCart();
+    }
   </script>
 </body>
 </html>

@@ -658,3 +658,41 @@ document.addEventListener('click', (e) => {
     shareModal.classList.add('hidden');
   }
 });
+
+// ============================================================
+// ضمان عمل عجلة الماوس داخل النافذة المنبثقة
+// ============================================================
+
+// منع تمرير الصفحة الخلفية عند فتح النافذة
+const originalOpenModalForScroll = window.openProductModal;
+if (typeof originalOpenModalForScroll === 'function') {
+  window.openProductModal = async function(productId) {
+    document.body.classList.add('modal-open');
+    await originalOpenModalForScroll(productId);
+  };
+}
+
+// إزالة الكلاس عند الإغلاق
+document.addEventListener('click', (e) => {
+  const modal = document.getElementById('productModal');
+  if (!modal || modal.classList.contains('hidden')) return;
+  
+  if (e.target.closest('#closeProductModal') || e.target === modal) {
+    document.body.classList.remove('modal-open');
+  }
+});
+
+// ضمان أن التمرير يعمل داخل النافذة
+document.addEventListener('DOMContentLoaded', () => {
+  const modalContent = document.querySelector('.product-modal-content');
+  if (modalContent) {
+    // تمرير العجلة يعمل داخل النافذة
+    modalContent.addEventListener('wheel', (e) => {
+      // إذا كانت النافذة مفتوحة، نسمح بالتمرير داخل النافذة
+      const modal = document.getElementById('productModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        // لا نمنع الحدث، بل نتركه يمر
+      }
+    }, { passive: true });
+  }
+});
