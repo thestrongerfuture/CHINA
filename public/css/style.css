@@ -1621,3 +1621,60 @@ body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a {
 .floating-whatsapp {
   z-index: 1001 !important; /* أعلى من الشريط السفلي */
 }
+
+/* ============================================================
+   توسيط الشريط السفلي وتصغيره (النسخة النهائية)
+   ============================================================ */
+
+/* 1. على الكمبيوتر (شاشات كبيرة) */
+@media (min-width: 769px) {
+  .bottom-nav {
+    left: 100px !important;   /* مسافة من اليسار (لزر الواتساب) */
+    right: 100px !important;  /* مسافة من اليمين (للتوسيط) */
+    margin: 0 auto 12px auto !important; /* توسيط أفقي */
+    border-radius: 999px !important;
+    padding: 4px 0 6px 0 !important; /* تقليل الارتفاع */
+    max-width: 600px !important; /* عرض أقصى */
+  }
+  
+  .nav-item {
+    padding: 2px 12px !important; /* تصغير الأزرار */
+  }
+  
+  .nav-icon {
+    font-size: 1.1rem !important; /* تصغير الأيقونة */
+  }
+  
+  .nav-label {
+    font-size: 0.7rem !important; /* تصغير النص */
+  }
+}
+
+/* 2. على الموبايل (شاشات صغيرة) */
+@media (max-width: 768px) {
+  .bottom-nav {
+    left: 70px !important;   /* مسافة من اليسار (لزر الواتساب) */
+    right: 70px !important;  /* مسافة من اليمين (للتوسيط) */
+    margin: 0 auto 10px auto !important;
+    border-radius: 16px !important;
+    padding: 4px 0 6px 0 !important; /* تقليل الارتفاع */
+    max-width: 90% !important;
+  }
+  
+  .nav-item {
+    padding: 2px 8px !important;
+  }
+  
+  .nav-icon {
+    font-size: 1rem !important;
+  }
+  
+  .nav-label {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* 3. التأكد من أن زر الواتساب لا يتداخل */
+.floating-whatsapp {
+  z-index: 1001 !important;
+}
