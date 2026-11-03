@@ -9,55 +9,31 @@
   <style>
     .admin-page { padding: 30px 0 60px; }
     .offer-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
+      background: #fff; border-radius: 12px; padding: 16px;
+      margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px;
     }
     .offer-info { flex: 1; }
     .offer-info h4 { color: var(--primary); margin-bottom: 4px; }
     .offer-info p { font-size: 0.85rem; color: var(--text-muted); }
-    .btn-delete-offer {
-      background: #fee2e2; color: #dc2626;
-      padding: 8px 16px; border-radius: 8px;
-      font-weight: 700; font-size: 0.85rem;
-      border: none; cursor: pointer;
-    }
+    .btn-delete-offer { background: #fee2e2; color: #dc2626; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; }
     .btn-delete-offer:hover { background: #dc2626; color: #fff; }
+    .btn-edit-offer { background: #eff6ff; color: #0040C0; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; }
+    .btn-edit-offer:hover { background: #0040C0; color: #fff; }
     
-    .add-offer-form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      margin-bottom: 30px;
-    }
+    .add-offer-form { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px; }
     .add-offer-form h3 { color: var(--primary); margin-bottom: 15px; }
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-weight: 700; margin-bottom: 4px; font-size: 0.9rem; }
-    .form-group input, .form-group select {
-      width: 100%; padding: 10px;
-      border: 1px solid #ddd; border-radius: 8px;
-      font-family: inherit; font-size: 0.95rem;
-    }
-    .btn-add-offer {
-      background: var(--primary); color: #fff;
-      padding: 12px 24px; border-radius: 8px;
-      font-weight: 700; font-size: 1rem;
-      border: none; cursor: pointer; width: 100%;
-    }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.95rem; }
+    .btn-add-offer { background: var(--primary); color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 1rem; border: none; cursor: pointer; width: 100%; }
     .btn-add-offer:hover { background: var(--primary-dark); }
+    .btn-cancel { background: #f1f5f9; color: #475569; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: none; }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
   <header class="site-header">
     <div class="container header-inner">
       <a href="/admin.html" class="brand">
@@ -78,7 +54,6 @@
     </div>
   </header>
 
-  <!-- LOGIN -->
   <div id="loginView" class="login-box" style="max-width: 400px; margin: 80px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center;">
     <h2 style="color: var(--primary); margin-bottom: 20px;">🔒 الدخول للوحة الإدارة</h2>
     <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور" style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; margin-bottom: 12px; text-align: center; font-family: inherit;">
@@ -86,35 +61,36 @@
     <p id="loginError" style="color: var(--danger); margin-top: 10px; font-size: 0.9rem; display: none;"></p>
   </div>
 
-  <!-- ADMIN CONTENT -->
   <main id="adminView" class="container admin-page" style="display: none;">
     <h1 style="color: var(--primary); margin-bottom: 20px; font-size: 1.5rem;">🏷️ إدارة العروض</h1>
 
-    <!-- Add Offer Form -->
     <div class="add-offer-form">
-      <h3>➕ إضافة عرض جديد</h3>
+      <h3 id="formTitle">➕ إضافة عرض جديد</h3>
+      <input type="hidden" id="editOfferId" value="">
       <div class="form-group">
         <label>اختر المنتج</label>
-        <select id="offerProduct" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
+        <select id="offerProduct">
           <option value="">-- اختر منتجاً --</option>
         </select>
       </div>
       <div class="form-group">
-        <label>عنوان العرض (مثال: عرض خاص على السماعات)</label>
+        <label>عنوان العرض</label>
         <input type="text" id="offerTitle" placeholder="اكتب عنواناً جذاباً للعرض">
       </div>
       <div class="form-group">
-        <label>الكمية المطلوبة (الحد الأدنى لتفعيل العرض)</label>
+        <label>الكمية المطلوبة</label>
         <input type="number" id="offerQuantity" value="5" min="1">
       </div>
       <div class="form-group">
-        <label>السعر الخاص للعرض (الإجمالي للكمية)</label>
+        <label>السعر الخاص للعرض (الإجمالي)</label>
         <input type="number" id="offerPrice" value="0" min="0" step="0.01">
       </div>
-      <button class="btn-add-offer" id="addOfferBtn">إضافة العرض</button>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-add-offer" id="addOfferBtn" style="flex: 2;">إضافة العرض</button>
+        <button id="cancelEditBtn" class="btn-cancel" style="flex: 1;">إلغاء التعديل</button>
+      </div>
     </div>
 
-    <!-- Offers List -->
     <h3 style="color: var(--primary); margin-bottom: 15px;">📋 العروض الحالية</h3>
     <div id="offersList"></div>
     <div id="emptyOffers" class="empty-state hidden">
@@ -129,7 +105,7 @@
 
     const $ = (s) => document.querySelector(s);
 
-    // ---------- LOGIN ----------
+    // LOGIN
     $('#loginBtn').onclick = tryLogin;
     $('#passwordInput').onkeypress = (e) => { if (e.key === 'Enter') tryLogin(); };
 
@@ -155,7 +131,6 @@
       $('#loginView').style.display = 'none';
       $('#adminView').style.display = 'block';
       
-      // جلب المنتجات لملء القائمة المنسدلة
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
@@ -174,7 +149,7 @@
       loadOffers();
     }
 
-    // ---------- LOAD OFFERS ----------
+    // LOAD OFFERS
     async function loadOffers() {
       const list = $('#offersList');
       const empty = $('#emptyOffers');
@@ -182,7 +157,7 @@
       empty.classList.add('hidden');
 
       try {
-        const res = await fetch('/api/offers', { headers: { 'X-Admin-Password': adminPassword } });
+        const res = await fetch('/api/offers?admin=true', { headers: { 'X-Admin-Password': adminPassword } });
         const data = await res.json();
         if (!data.ok) throw new Error(data.error);
 
@@ -200,11 +175,25 @@
               <p>المنتج: #${o.product_id} — الكمية: ${o.quantity} — السعر الخاص: $${Number(o.offer_price).toFixed(2)}</p>
             </div>
             <div style="display: flex; gap: 6px;">
-              <button class="btn-edit-offer" data-id="${o.id}" style="background:#eff6ff; color:#0040C0; padding:8px 16px; border-radius:8px; font-weight:700; font-size:0.85rem; border:none; cursor:pointer;">✏️ تعديل</button>
+              <button class="btn-edit-offer" data-id="${o.id}">✏️ تعديل</button>
               <button class="btn-delete-offer" data-id="${o.id}">🗑️ حذف</button>
             </div>
           `;
+          
           card.querySelector('.btn-delete-offer').onclick = () => deleteOffer(o.id);
+          card.querySelector('.btn-edit-offer').onclick = () => {
+            // تعبئة النموذج
+            $('#offerProduct').value = o.product_id;
+            $('#offerTitle').value = o.title;
+            $('#offerQuantity').value = o.quantity;
+            $('#offerPrice').value = o.offer_price;
+            $('#editOfferId').value = o.id;
+            $('#formTitle').textContent = '✏️ تعديل العرض';
+            $('#addOfferBtn').textContent = 'حفظ التعديلات';
+            $('#cancelEditBtn').style.display = 'block';
+            $('.add-offer-form').scrollIntoView({ behavior: 'smooth' });
+          };
+          
           list.appendChild(card);
         });
       } catch (e) {
@@ -212,33 +201,60 @@
       }
     }
 
-    // ---------- ADD OFFER ----------
+    // إلغاء التعديل
+    $('#cancelEditBtn').onclick = () => {
+      $('#editOfferId').value = '';
+      $('#offerProduct').value = '';
+      $('#offerTitle').value = '';
+      $('#offerQuantity').value = '5';
+      $('#offerPrice').value = '0';
+      $('#formTitle').textContent = '➕ إضافة عرض جديد';
+      $('#addOfferBtn').textContent = 'إضافة العرض';
+      $('#cancelEditBtn').style.display = 'none';
+    };
+
+    // إضافة أو تعديل
     $('#addOfferBtn').onclick = async () => {
       const product_id = $('#offerProduct').value;
       const title = $('#offerTitle').value.trim();
       const quantity = parseInt($('#offerQuantity').value);
       const offer_price = parseFloat($('#offerPrice').value);
+      const editId = $('#editOfferId').value;
 
       if (!product_id || !title || !quantity || !offer_price) {
         alert('يرجى ملء جميع الحقول');
         return;
       }
 
+      const action = editId ? 'edit' : 'add';
+      const payload = editId 
+        ? { action, offer_id: parseInt(editId), title, quantity, offer_price }
+        : { action, product_id, title, quantity, offer_price };
+
       try {
         const res = await fetch('/api/offers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
-          body: JSON.stringify({ action: 'add', product_id, title, quantity, offer_price })
+          body: JSON.stringify(payload)
         });
         const data = await res.json();
         if (!data.ok) throw new Error(data.error);
-        alert('✅ تم إضافة العرض');
+        
+        alert(editId ? '✅ تم تعديل العرض' : '✅ تم إضافة العرض');
+        
+        // إعادة تعيين
+        $('#editOfferId').value = '';
         $('#offerTitle').value = '';
+        $('#offerQuantity').value = '5';
+        $('#offerPrice').value = '0';
+        $('#formTitle').textContent = '➕ إضافة عرض جديد';
+        $('#addOfferBtn').textContent = 'إضافة العرض';
+        $('#cancelEditBtn').style.display = 'none';
+        
         loadOffers();
       } catch (e) { alert('❌ ' + e.message); }
     };
 
-    // ---------- DELETE OFFER ----------
     async function deleteOffer(id) {
       if (!confirm('هل أنت متأكد من حذف هذا العرض؟')) return;
       try {
@@ -253,65 +269,7 @@
       } catch (e) { alert('❌ ' + e.message); }
     }
 
-    // ---------- INIT ----------
     if (adminPassword) showAdmin();
-
-    // ---------- EDIT OFFER ----------
-    async function editOffer(offer) {
-      // نافذة منبثقة بسيطة (Prompt) لتعديل البيانات
-      const newTitle = prompt('عنوان العرض:', offer.title);
-      if (newTitle === null) return; // إذا ضغط إلغاء
-
-      const newQuantity = prompt('الكمية المطلوبة:', offer.quantity);
-      if (newQuantity === null) return;
-
-      const newPrice = prompt('السعر الخاص للعرض (الإجمالي):', offer.offer_price);
-      if (newPrice === null) return;
-
-      if (!newTitle || !newQuantity || !newPrice) {
-        alert('يرجى ملء جميع الحقول');
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/offers', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
-          body: JSON.stringify({ 
-            action: 'edit', 
-            offer_id: offer.id, 
-            title: newTitle, 
-            quantity: parseInt(newQuantity), 
-            offer_price: parseFloat(newPrice) 
-          })
-        });
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error);
-        alert('✅ تم تعديل العرض');
-        loadOffers();
-      } catch (e) {
-        alert('❌ ' + e.message);
-      }
-    }
-
-    // ربط زر التعديل في دالة العرض
-    const originalLoadOffers = loadOffers;
-    loadOffers = async function() {
-      await originalLoadOffers();
-      // بعد تحميل العروض، نربط أزرار التعديل
-      document.querySelectorAll('.btn-edit-offer').forEach(btn => {
-        btn.onclick = async () => {
-          const offerId = btn.dataset.id;
-          // جلب بيانات العرض من القائمة (أو من الـ API)
-          const res = await fetch('/api/offers?admin=true', { headers: { 'X-Admin-Password': adminPassword } });
-          const data = await res.json();
-          if (data.ok) {
-            const offer = data.offers.find(o => o.id == offerId);
-            if (offer) editOffer(offer);
-          }
-        };
-      });
-    };
   </script>
 </body>
 </html>
