@@ -210,6 +210,7 @@ function buildProductCard(p) {
   const outOfStock = (p.stock || 0) <= 0;
 
   card.innerHTML = `
+    ${p.created_at && (new Date() - new Date(p.created_at)) < 7 * 24 * 60 * 60 * 1000 ? '<span style="position:absolute; top:10px; left:10px; background:#10b981; color:#fff; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:700; z-index:2;">جديد</span>' : ''}
     <span class="product-id-badge">#${p.id}</span>
     <div class="product-img-wrap">
       <img src="/images/products/${p.id}.png" alt="${escapeHtml(p.name)}" loading="lazy" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.src='/images/products/${p.id}.jpg';}else{this.outerHTML='<div class=&quot;product-placeholder&quot;>🛍️</div>';}">

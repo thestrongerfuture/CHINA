@@ -10,7 +10,7 @@
 
     // إذا طُلب منتج واحد
     if (id) {
-      const stmt = env.DB.prepare('SELECT id, name, brand, category, price, stock, image_url, description FROM products WHERE id = ?');
+      const stmt = env.DB.prepare('SELECT id, name, brand, category, price, stock, image_url, description, created_at FROM products WHERE id = ?');
       const result = await stmt.bind(id).first();
       if (!result) {
         return new Response(JSON.stringify({ ok: false, error: 'المنتج غير موجود' }), {
@@ -23,7 +23,7 @@
     }
 
     // قائمة المنتجات مع فلاتر
-    let sql = 'SELECT id, name, brand, category, price, stock, image_url, description FROM products WHERE is_hidden = 0';
+    let sql = 'SELECT id, name, brand, category, price, stock, image_url, description, created_at FROM products WHERE is_hidden = 0';
     const params = [];
 
     if (brand) { sql += ' AND brand = ?'; params.push(brand); }
