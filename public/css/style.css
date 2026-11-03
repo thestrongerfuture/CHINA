@@ -1678,3 +1678,43 @@ body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a {
 .floating-whatsapp {
   z-index: 1001 !important;
 }
+
+/* ============================================================
+   إعادة إظهار شريط السحب (Slider) على الموبايل
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* إعادة إظهار الشريط (إلغاء display: none) */
+  .qty-slider {
+    display: block !important;
+    width: 100% !important;
+    margin: 4px 0 !important;
+    height: 4px !important; /* رفيع قليلاً */
+  }
+  
+  /* إعادة ترتيب شريط الكمية ليتسع للشريط والأزرار */
+  .qty-control {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 4px !important;
+  }
+  
+  /* تصغير الأزرار أكثر قليلاً */
+  .qty-btn {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* تصغير الرقم المعروض */
+  .qty-value {
+    font-size: 0.8rem !important;
+    min-width: 20px !important;
+  }
+  
+  /* جعل الشريط يأخذ العرض الكامل في سطر منفصل */
+  .qty-slider {
+    flex: 1 1 100% !important;
+    order: 4 !important; /* يظهر بعد الأزرار والرقم */
+  }
+}
