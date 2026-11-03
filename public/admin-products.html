@@ -181,10 +181,13 @@
             </div>
           </div>
           <div style="display: flex; gap: 6px; flex-shrink: 0;">
-            <button class="btn-toggle" data-id="${p.id}" style="background: ${isHidden ? '#d1fae5' : '#fef3c7'}; color: ${isHidden ? '#065f46' : '#92400e'}; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; border: none;">
-              ${isHidden ? '👁️ إظهار' : '🙈 إخفاء'}
-            </button>
-            <button class="btn-delete" data-id="${p.id}">🗑️ حذف</button>
+              <button class="btn-edit" data-id="${p.id}" style="background:#eff6ff; color:#0040C0; padding:8px 16px; border-radius:8px; font-weight:700; font-size:0.85rem; border:none; cursor:pointer;">✏️ تعديل</button>
+              <button class="btn-toggle" data-id="${p.id}" style="background: ${isHidden ? '#d1fae5' : '#fef3c7'}; color: ${isHidden ? '#065f46' : '#92400e'}; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; border: none;">
+                ${isHidden ? '👁️ إظهار' : '🙈 إخفاء'}
+              </button>
+              <button class="btn-delete" data-id="${p.id}">🗑️ حذف</button>
+            </div>
+            </div>
           </div>
         `;
         
@@ -256,6 +259,245 @@
 
     // ---------- INIT ----------
     if (adminPassword) showAdmin();
+
+    // ============================================================
+    // تعديل المنتج (Product Edit Modal)
+    // ============================================================
+    
+    // ربط أزرار التعديل بعد تحميل المنتجات
+    const originalRenderProductsList = renderProductsList;
+    renderProductsList = function(products) {
+      originalRenderProductsList(products);
+      // إعادة ربط أزرار التعديل
+      document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.onclick = () => {
+          const productId = btn.dataset.id;
+          const product = allProducts.find(p => p.id == productId);
+          if (product) openEditModal(product);
+        };
+      });
+    };
+
+    // فتح نافذة التعديل
+    function openEditModal(product) {
+      document.getElementById('editProductId').value = product.id;
+      document.getElementById('editProductName').value = product.name || '';
+      document.getElementById('editProductPrice').value = product.price || 0;
+      document.getElementById('editProductDescription').value = product.description || '';
+      
+      // تحويل التاريخ إلى صيغة YYYY-MM-DD
+      let dateStr = '';
+      if (product.created_at) {
+        const d = new Date(product.created_at);
+        if (!isNaN(d.getTime())) {
+          dateStr = d.toISOString().split('T')[0];
+        }
+      }
+      document.getElementById('editProductDate').value = dateStr;
+      
+      document.getElementById('editProductModal').classList.remove('hidden');
+    }
+
+    // إغلاق النافذة
+    document.getElementById('closeEditModal').onclick = () => {
+      document.getElementById('editProductModal').classList.add('hidden');
+    };
+    document.getElementById('cancelEditProduct').onclick = () => {
+      document.getElementById('editProductModal').classList.add('hidden');
+    };
+    document.getElementById('editProductModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('editProductModal')) {
+        document.getElementById('editProductModal').classList.add('hidden');
+      }
+    });
+
+    // حفظ التعديلات
+    document.getElementById('saveEditProduct').onclick = async () => {
+      const id = document.getElementById('editProductId').value;
+      const name = document.getElementById('editProductName').value.trim();
+      const price = parseFloat(document.getElementById('editProductPrice').value);
+      const description = document.getElementById('editProductDescription').value.trim();
+      const date = document.getElementById('editProductDate').value;
+
+      if (!id || !name || isNaN(price)) {
+        alert('يرجى ملء جميع الحقول المطلوبة');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/edit-product', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
+          body: JSON.stringify({ id, name, price, description, created_at: date || null })
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error);
+        
+        alert('✅ تم حفظ التعديلات');
+        document.getElementById('editProductModal').classList.add('hidden');
+        loadProducts(); // إعادة تحميل القائمة
+      } catch (e) {
+        alert('❌ ' + e.message);
+      }
+    };
+
+    // ============================================================
+    // دالة حفظ تعديل المنتج (مستقلة لضمان العمل)
+    // ============================================================
+    window.saveProductEdit = async function() {
+      const id = document.getElementById('editProductId').value;
+      const name = document.getElementById('editProductName').value.trim();
+      const price = parseFloat(document.getElementById('editProductPrice').value);
+      const description = document.getElementById('editProductDescription').value.trim();
+      const date = document.getElementById('editProductDate').value;
+
+      if (!id || !name || isNaN(price)) {
+        alert('يرجى ملء جميع الحقول المطلوبة');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/edit-product', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
+          body: JSON.stringify({ id, name, price, description, created_at: date || null })
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error);
+        
+        alert('✅ تم حفظ التعديلات');
+        document.getElementById('editProductModal').classList.add('hidden');
+        loadProducts(); // إعادة تحميل القائمة
+      } catch (e) {
+        alert('❌ ' + e.message);
+      }
+    };
+
+    // ============================================================
+    // ربط زر حفظ التعديلات (طريقة مضمونة)
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      const saveBtn = document.getElementById('saveEditProduct');
+      if (saveBtn) {
+        // إزالة أي حدث قديم
+        saveBtn.onclick = null;
+        
+        // إضافة الحدث الجديد
+        saveBtn.addEventListener('click', async function(e) {
+          e.preventDefault();
+          
+          const id = document.getElementById('editProductId').value;
+          const name = document.getElementById('editProductName').value.trim();
+          const price = parseFloat(document.getElementById('editProductPrice').value);
+          const description = document.getElementById('editProductDescription').value.trim();
+          const date = document.getElementById('editProductDate').value;
+
+          if (!id || !name || isNaN(price)) {
+            alert('يرجى ملء الحقول المطلوبة (الاسم والسعر)');
+            return;
+          }
+
+          try {
+            const res = await fetch('/api/edit-product', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
+              body: JSON.stringify({ id, name, price, description, created_at: date || null })
+            });
+            const data = await res.json();
+            if (!data.ok) throw new Error(data.error);
+            
+            alert('✅ تم حفظ التعديلات');
+            document.getElementById('editProductModal').classList.add('hidden');
+            
+            // إعادة تحميل القائمة
+            if (typeof loadProducts === 'function') {
+              loadProducts();
+            } else {
+              location.reload();
+            }
+          } catch (err) {
+            alert('❌ ' + err.message);
+          }
+        });
+      }
+    });
+
+    // ============================================================
+    // دالة حفظ تعديل المنتج (مباشرة - مضمونة 100%)
+    // ============================================================
+    async function saveProductDirect() {
+      // جلب القيم من الحقول
+      const id = document.getElementById('editProductId').value;
+      const name = document.getElementById('editProductName').value.trim();
+      const price = parseFloat(document.getElementById('editProductPrice').value);
+      const description = document.getElementById('editProductDescription').value.trim();
+      const date = document.getElementById('editProductDate').value;
+
+      // التحقق من المدخلات
+      if (!id || !name || isNaN(price)) {
+        alert('يرجى ملء الحقول المطلوبة (الاسم والسعر)');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/edit-product', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
+          body: JSON.stringify({ id, name, price, description, created_at: date || null })
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error);
+        
+        alert('✅ تم حفظ التعديلات');
+        document.getElementById('editProductModal').classList.add('hidden');
+        
+        // إعادة تحميل القائمة
+        if (typeof loadProducts === 'function') {
+          loadProducts();
+        } else {
+          location.reload();
+        }
+      } catch (err) {
+        alert('❌ ' + err.message);
+      }
+    }
   </script>
+
+  <!-- ============ EDIT PRODUCT MODAL ============ -->
+  <div class="modal-overlay hidden" id="editProductModal" style="z-index: 300;">
+    <div class="modal-content" style="max-width: 500px; padding: 24px; border-radius: 16px; text-align: right;">
+      <button class="modal-close" id="closeEditModal" onclick="document.getElementById('editProductModal').classList.add('hidden')" style="position: absolute; top: 10px; left: 10px; font-size: 1.5rem; color: #999; background: none; border: none; cursor: pointer;">✕</button>
+      
+      <h3 style="color: var(--primary); margin-bottom: 20px; font-size: 1.2rem;">✏️ تعديل المنتج</h3>
+      
+      <input type="hidden" id="editProductId">
+      
+      <div style="margin-bottom: 12px;">
+        <label style="font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 4px;">اسم المنتج</label>
+        <input type="text" id="editProductName" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
+      </div>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 4px;">السعر</label>
+        <input type="number" id="editProductPrice" step="0.01" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
+      </div>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 4px;">الوصف</label>
+        <textarea id="editProductDescription" rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 4px;">تاريخ الإضافة (لتحديد ظهوره في "جديدنا")</label>
+        <input type="date" id="editProductDate" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
+      </div>
+      
+      <div style="display: flex; gap: 10px;">
+        <button id="cancelEditProduct" onclick="document.getElementById('editProductModal').classList.add('hidden')" style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-weight: 700; color: #555; cursor: pointer;">إلغاء</button>
+        <button id="saveEditProduct" onclick="saveProductDirect()" style="flex: 2; padding: 12px; border-radius: 8px; border: none; background: var(--primary); color: #fff; font-weight: 700; cursor: pointer;">حفظ التعديلات</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
