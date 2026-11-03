@@ -52,6 +52,58 @@
     
     #productsAdminList { max-height: 70vh; overflow-y: auto; padding: 4px; }
   </style>
+
+  <style>
+    /* إصلاح التصميم على الموبايل (منع التمرير الأفقي) */
+    @media (max-width: 768px) {
+      /* 1. منع التمرير الأفقي على مستوى الصفحة */
+      body, html {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      /* 2. جعل البطاقات تتكيف مع عرض الشاشة */
+      .product-admin-card {
+        flex-wrap: wrap !important; /* السماح بالالتفاف */
+        padding: 10px !important;
+      }
+
+      /* 3. جعل الأزرار (تعديل، إخفاء، حذف) في صف واحد يتكيف */
+      .product-admin-card > div:last-child {
+        width: 100% !important;
+        justify-content: center !important;
+        margin-top: 8px !important;
+      }
+
+      .product-admin-card button {
+        flex: 1 !important; /* الأزرار تأخذ مساحة متساوية */
+        padding: 8px 4px !important;
+        font-size: 0.75rem !important;
+      }
+
+      /* 4. تصغير صورة المنتج */
+      .product-admin-img {
+        width: 50px !important;
+        height: 50px !important;
+      }
+
+      /* 5. تصغير النصوص */
+      .product-admin-info h4 {
+        font-size: 0.85rem !important;
+      }
+      .product-admin-info .meta {
+        font-size: 0.7rem !important;
+        gap: 6px !important;
+      }
+
+      /* 6. تصغير شريط البحث */
+      .search-bar-admin {
+        padding: 10px 16px !important;
+        font-size: 0.9rem !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
