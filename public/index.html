@@ -175,7 +175,10 @@
           <h2 id="pmName" style="color: var(--primary); font-size: 1.3rem; line-height: 1.3;"></h2>
         </div>
         
-        <div class="price-large" id="pmPrice" style="font-size: 1.6rem;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div class="price-large" id="pmPrice" style="font-size: 1.6rem;"></div>
+          <div id="pmTotalPrice" style="font-size: 1.3rem; font-weight: 800; color: #10b981; background: #ecfdf5; padding: 4px 12px; border-radius: 999px; display: none;"></div>
+        </div>
         
         <div style="color:var(--text-muted); font-size: 0.9rem;">
           المخزون: <strong id="pmStock"></strong>
@@ -185,9 +188,9 @@
           <p style="margin-bottom: 8px; font-weight:700; font-size: 0.9rem;">الكمية المطلوبة:</p>
           <div class="qty-control">
             <button class="qty-btn" id="pmBtnMinus">−</button>
-            <input type="range" class="qty-slider" id="pmQtySlider" min="1" value="1">
             <span class="qty-value" id="pmQtyVal">1</span>
             <button class="qty-btn" id="pmBtnPlus">+</button>
+            <input type="range" class="qty-slider" id="pmQtySlider" min="1" value="1">
           </div>
         </div>
 

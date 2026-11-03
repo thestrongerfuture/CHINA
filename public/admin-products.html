@@ -335,6 +335,7 @@
       document.getElementById('editProductId').value = product.id;
       document.getElementById('editProductName').value = product.name || '';
       document.getElementById('editProductPrice').value = product.price || 0;
+      document.getElementById('editProductStock').value = product.stock || 0;
       document.getElementById('editProductDescription').value = product.description || '';
       
       // تحويل التاريخ إلى صيغة YYYY-MM-DD
@@ -380,7 +381,7 @@
         const res = await fetch('/api/edit-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
-          body: JSON.stringify({ id, name, price, description, created_at: date || null })
+          body: JSON.stringify({ id, name, price, stock, description, created_at: date || null })
         });
         const data = await res.json();
         if (!data.ok) throw new Error(data.error);
@@ -412,7 +413,7 @@
         const res = await fetch('/api/edit-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
-          body: JSON.stringify({ id, name, price, description, created_at: date || null })
+          body: JSON.stringify({ id, name, price, stock, description, created_at: date || null })
         });
         const data = await res.json();
         if (!data.ok) throw new Error(data.error);
@@ -453,7 +454,7 @@
             const res = await fetch('/api/edit-product', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
-              body: JSON.stringify({ id, name, price, description, created_at: date || null })
+              body: JSON.stringify({ id, name, price, stock, description, created_at: date || null })
             });
             const data = await res.json();
             if (!data.ok) throw new Error(data.error);
@@ -482,6 +483,7 @@
       const id = document.getElementById('editProductId').value;
       const name = document.getElementById('editProductName').value.trim();
       const price = parseFloat(document.getElementById('editProductPrice').value);
+      const stock = parseInt(document.getElementById('editProductStock').value) || 0;
       const description = document.getElementById('editProductDescription').value.trim();
       const date = document.getElementById('editProductDate').value;
 
@@ -495,7 +497,7 @@
         const res = await fetch('/api/edit-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
-          body: JSON.stringify({ id, name, price, description, created_at: date || null })
+          body: JSON.stringify({ id, name, price, stock, description, created_at: date || null })
         });
         const data = await res.json();
         if (!data.ok) throw new Error(data.error);
@@ -532,6 +534,11 @@
       <div style="margin-bottom: 12px;">
         <label style="font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 4px;">السعر</label>
         <input type="number" id="editProductPrice" step="0.01" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
+      </div>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 4px;">الكمية (المخزون)</label>
+        <input type="number" id="editProductStock" min="0" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;">
       </div>
       
       <div style="margin-bottom: 12px;">

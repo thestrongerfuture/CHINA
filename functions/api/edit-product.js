@@ -11,15 +11,15 @@
 
     // استقبال البيانات
     const body = await request.json();
-    const { id, name, price, description, created_at } = body;
+    const { id, name, price, stock, description, created_at } = body;
 
     if (!id || !name || isNaN(price)) {
       return jsonError('الحقول المطلوبة ناقصة', 400);
     }
 
     // تحديث المنتج
-    let sql = 'UPDATE products SET name = ?, price = ?, description = ?';
-    const params = [name, price, description || ''];
+    let sql = 'UPDATE products SET name = ?, price = ?, stock = ?, description = ?';
+    const params = [name, price, stock, description || ''];
 
     if (created_at) {
       sql += ', created_at = ?';

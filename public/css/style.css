@@ -1157,17 +1157,17 @@ body {
   }
   
   .qty-slider {
-    order: 3 !important; /* الشريط في الأسفل */
+     /* الشريط في الأسفل */
     flex: 1 1 100% !important; /* يأخذ العرض الكامل */
   }
 
   .qty-btn {
-    order: 1 !important;
+    
     margin: 0 4px !important;
   }
 
   .qty-value {
-    order: 2 !important;
+    
     margin: 0 4px !important;
     min-width: 24px !important;
   }
@@ -1198,7 +1198,7 @@ body {
 
   /* الشريط في الأسفل يأخذ العرض كاملاً */
   .qty-slider {
-    order: 4 !important; /* آخر عنصر */
+     /* آخر عنصر */
     flex: 1 1 100% !important;
     width: 100% !important;
     margin-top: 8px !important;
@@ -1206,7 +1206,7 @@ body {
 
   /* الأزرار والعدد */
   .qty-btn {
-    order: 1 !important;
+    
     width: 24px !important;
     height: 24px !important;
     font-size: 0.9rem !important;
@@ -1214,7 +1214,7 @@ body {
   }
   
   .qty-value {
-    order: 2 !important;
+    
     min-width: 20px !important;
     text-align: center !important;
     font-size: 0.8rem !important;
@@ -1223,7 +1223,7 @@ body {
 
   /* نعدل ترتيب زر (+) ليكون بعد العدد */
   .qty-btn[data-act="plus"] {
-    order: 3 !important;
+    
   }
 
   /* إخفاء الشريط (Slider) وإظهار الأزرار فقط على الموبايل لتوفير المساحة */
@@ -1715,7 +1715,7 @@ body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a {
   /* جعل الشريط يأخذ العرض الكامل في سطر منفصل */
   .qty-slider {
     flex: 1 1 100% !important;
-    order: 4 !important; /* يظهر بعد الأزرار والرقم */
+     /* يظهر بعد الأزرار والرقم */
   }
 }
 
@@ -1791,4 +1791,126 @@ body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a {
 /* منع التمرير في الصفحة الخلفية عند تمرير العجلة داخل النافذة */
 body.modal-open {
   overflow: hidden !important;
+}
+
+
+
+/* 2. الأزرار */
+.product-modal-content .qty-btn {
+  
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 1.1rem !important;
+}
+
+/* 3. الرقم */
+
+
+/* 4. زر (+) يأتي بعد الرقم */
+
+
+/* 5. الشريط في الأسفل يأخذ عرض كامل */
+
+
+/* 6. تحسين شكل السعر الإجمالي */
+#pmTotalPrice {
+  transition: all 0.2s ease;
+}
+
+/* ============================================================
+   الترتيب النهائي لشريط الكمية داخل النافذة المنبثقة
+   ============================================================ */
+
+/* 1. الحاوية: ترتيب أفقي مع التفاف */
+.product-modal-content .qty-control {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* 2. زر (-) في البداية */
+
+
+/* 3. الرقم في المنتصف */
+
+
+/* 4. زر (+) بعد الرقم */
+
+
+/* 5. الشريط في الأسفل (عرض كامل) */
+
+
+/* 6. تصغير الأزرار قليلاً لتناسب النافذة */
+.product-modal-content .qty-btn {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 1.1rem !important;
+}
+
+/* ============================================================
+   الترتيب النهائي (بدون order) - يعتمد على HTML
+   ============================================================ */
+
+.product-modal-content .qty-control {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* الشريط في الأسفل (يأخذ عرض كامل) */
+.product-modal-content .qty-slider {
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+}
+
+/* تصغير الأزرار */
+.product-modal-content .qty-btn {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 1.1rem !important;
+}
+
+/* ============================================================
+   جعل عداد السلة ديناميكياً (يتوسع أفقيًا حسب حجم الرقم)
+   ============================================================ */
+
+/* 1. إزالة العرض والارتفاع الثابتين من العداد */
+.cart-badge {
+  display: inline-flex !important; /* يسمح بالتوسع */
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 22px !important;      /* الحد الأدنى للعرض (دائرة صغيرة) */
+  height: 22px !important;          /* الارتفاع ثابت */
+  padding: 0 6px !important;       /* حشو أفقي للسماح بالتوسع */
+  border-radius: 999px !important; /* يجعله كبسولة (Pill) بدلاً من دائرة */
+  background: var(--danger) !important; /* اللون الأحمر (أو حسب التصميم) */
+  color: #fff !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;  /* يمنع كسر النص */
+  width: auto !important;           /* إلغاء العرض الثابت */
+}
+
+/* 2. تحسين المظهر داخل الزر الذي يحمل كلاس pill-cart (الزر الأبيض) */
+.pill-cart .cart-badge {
+  background: var(--primary) !important; /* اللون الأزرق (حسب تصميمك) */
+  margin-right: 4px !important;
+}
+
+/* 3. على الموبايل، تصغير الحشو قليلاً */
+@media (max-width: 768px) {
+  .cart-badge {
+    padding: 0 4px !important;
+    font-size: 0.7rem !important;
+    min-width: 20px !important;
+    height: 20px !important;
+  }
 }

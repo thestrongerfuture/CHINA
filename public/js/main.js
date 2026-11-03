@@ -248,6 +248,18 @@ function buildProductCard(p) {
     v = Math.max(1, Math.min(maxQty, v));
     slider.value = v;
     qtyVal.textContent = v;
+    
+    // تحديث السعر الإجمالي
+    const totalEl = document.getElementById('pmTotalPrice');
+    if (totalEl) {
+      if (v > 1) {
+        const total = (v * Number(p.price)).toFixed(2);
+        totalEl.textContent = `$${total}`;
+        totalEl.style.display = 'block';
+      } else {
+        totalEl.style.display = 'none';
+      }
+    }
   }
   slider.addEventListener('input', () => setQty(+slider.value));
   btnMinus.onclick = () => setQty(+slider.value - 1);
@@ -441,6 +453,18 @@ function renderProductModal(p) {
     v = Math.max(1, Math.min(maxQty, v));
     slider.value = v;
     qtyVal.textContent = v;
+    
+    // تحديث السعر الإجمالي
+    const totalEl = document.getElementById('pmTotalPrice');
+    if (totalEl) {
+      if (v > 1) {
+        const total = (v * Number(p.price)).toFixed(2);
+        totalEl.textContent = `$${total}`;
+        totalEl.style.display = 'block';
+      } else {
+        totalEl.style.display = 'none';
+      }
+    }
   };
   slider.oninput = () => setQty(+slider.value);
   btnMinus.onclick = () => setQty(+slider.value - 1);

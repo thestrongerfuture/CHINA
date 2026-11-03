@@ -49,6 +49,97 @@
       .invoice-page { padding: 0 !important; }
     }
   </style>
+
+  <style>
+    /* تنسيق أزرار الفاتورة */
+    .invoice-actions {
+      display: flex !important;
+      gap: 10px !important;
+      justify-content: center !important;
+      flex-wrap: wrap !important;
+      margin-top: 20px !important;
+      padding: 15px !important;
+      background: #f8fafc !important;
+      border-radius: 12px !important;
+      border: 1px solid #e2e8f0 !important;
+    }
+
+    .invoice-actions .btn-edit,
+    .invoice-actions .btn-confirm,
+    .invoice-actions .btn-print,
+    .invoice-actions .btn-back,
+    .invoice-actions .btn-update {
+      padding: 10px 20px !important;
+      font-size: 0.9rem !important;
+      border-radius: 8px !important;
+      font-weight: 700 !important;
+    }
+
+    /* جعل الأزرار تبدو متناسقة */
+    .invoice-actions .btn-edit {
+      background: #eff6ff !important;
+      color: #0040C0 !important;
+      border: 1px solid #dbeafe !important;
+    }
+    .invoice-actions .btn-confirm {
+      background: #10b981 !important;
+      color: #fff !important;
+    }
+    .invoice-actions .btn-print {
+      background: var(--primary) !important;
+      color: #fff !important;
+    }
+    .invoice-actions .btn-back {
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+    }
+    .invoice-actions .btn-update {
+      background: #25D366 !important;
+      color: #fff !important;
+    }
+
+    /* على الموبايل: ترتيب الأزرار بشكل أفضل */
+    @media (max-width: 768px) {
+      .invoice-actions {
+        flex-direction: column !important;
+      }
+      .invoice-actions .btn-edit,
+      .invoice-actions .btn-confirm,
+      .invoice-actions .btn-print,
+      .invoice-actions .btn-back,
+      .invoice-actions .btn-update {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+    }
+  </style>
+
+  <style>
+    /* إخفاء الأزرار عند الطباعة */
+    @media print {
+      .invoice-actions,
+      .btn-print,
+      .btn-back,
+      .site-header,
+      .bottom-nav,
+      .floating-whatsapp,
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #fff !important;
+        padding: 0 !important;
+      }
+      .invoice-box {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        margin: 0 !important;
+      }
+      .invoice-page {
+        padding: 0 !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -150,9 +241,10 @@
     }
 
     function renderInvoice() {
-      const o = currentOrder;
-      $('#loading').classList.add('hidden');
-      $('#invoiceContainer').classList.remove('hidden');
+      try {
+        const o = currentOrder;
+        $('#loading').classList.add('hidden');
+        $('#invoiceContainer').classList.remove('hidden');
 
       // تعبئة البيانات
       $('#invId').textContent = `#${o.id}`;
@@ -164,7 +256,7 @@
       // الحالة
       const statusEl = $('#invStatus');
       if (o.status === 'pending' && o.is_confirmed == 0) {
-        statusEl.textContent = 'قيد التعديل';
+        statusEl.textContent = 'قيد الانتظار للموافقة';
         statusEl.className = 'status-badge status-pending';
       } else if (o.status === 'pending' && o.is_confirmed == 1) {
         statusEl.textContent = 'بانتظار الموافقة';
@@ -198,34 +290,20 @@
 
       $('#invTotal').textContent = `$${total.toFixed(2)}`;
 
-      // الأزرار
-      renderActions(o);
+        // الأزرار
+        renderActions(o);
+      } catch (err) {
+        console.error('خطأ في عرض الفاتورة:', err);
+        $('#loading').textContent = '❌ خطأ في عرض الفاتورة: ' + err.message;
+      }
     }
 
     function renderActions(o) {
       const actions = $('#invoiceActions');
       actions.innerHTML = '';
 
-      // إذا كان الطلب قيد التعديل (pending + is_confirmed=0)
-      if (o.status === 'pending' && o.is_confirmed == 0) {
-        actions.innerHTML = `
-          <button class="btn-edit" onclick="editOrder()">✏️ تعديل الطلب</button>
-          <button class="btn-update" onclick="sendWhatsAppUpdate()" style="background: #25D366; color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">📤 إرسال تحديث للمدير</button>
-          <button class="btn-confirm" onclick="confirmOrder()">✅ تأكيد الطلب النهائي</button>
-          <a href="/" class="btn-back">⬅️ العودة للمتجر</a>
-        `;
-      } 
-      // إذا كان بانتظار الموافقة (pending + is_confirmed=1)
-      else if (o.status === 'pending' && o.is_confirmed == 1) {
-        actions.innerHTML = `
-          <div style="color: var(--text-muted); text-align: center; width: 100%; padding: 10px;">
-            ⏳ طلبك قيد المراجعة من الإدارة. لا يمكن التعديل عليه الآن.
-          </div>
-          <a href="/" class="btn-back">⬅️ العودة للمتجر</a>
-        `;
-      } 
-      // إذا تمت الموافقة (approved)
-      else if (o.status === 'approved') {
+      // إذا كان الطلب بانتظار الموافقة أو تمت الموافقة، نعرض زر الطباعة فقط
+      if (o.status === 'pending' || o.status === 'approved') {
         actions.innerHTML = `
           <button class="btn-print" onclick="window.print()">🖨️ طباعة الفاتورة / حفظ PDF</button>
           <a href="/" class="btn-back">⬅️ العودة للمتجر</a>
@@ -243,10 +321,7 @@
     }
 
     // تعديل الطلب (إضافة منتجات / تغيير كميات)
-    function editOrder() {
-      // تحويل المستخدم إلى صفحة السلة مع رقم الطلب للتعديل
-      window.location.href = `/cart.html?edit_order=${orderId}`;
-    }
+    // تم حذف الكود المعطل
 
     // إرسال تحديث للمدير عبر واتساب
     function sendWhatsAppUpdate() {
@@ -272,36 +347,6 @@
     }
 
     // تأكيد الطلب النهائي
-    async function confirmOrder() {
-      if (!confirm('هل أنت متأكد من تأكيد الطلب؟ بعد التأكيد لن تتمكن من تعديله.')) return;
-
-      try {
-        const res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'confirm', order_id: orderId })
-        });
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error);
-        
-        // --- إرسال رسالة تأكيد نهائي للمدير ---
-        const managerPhone = '963956410417';
-        const invoiceUrl = `${location.origin}/invoice.html?id=${orderId}`;
-        let waMessage = `✅ *تم تأكيد الطلب نهائياً* ✅\n`;
-        waMessage += `------------------------\n`;
-        waMessage += `📝 *رقم الطلب:* #${orderId}\n`;
-        waMessage += `👤 *العميل:* ${currentOrder.customer_name}\n`;
-        waMessage += `🔗 *رابط الفاتورة:* ${invoiceUrl}`;
-        
-        const waUrl = `https://wa.me/${managerPhone}?text=${encodeURIComponent(waMessage)}`;
-        window.open(waUrl, '_blank');
-        
-        alert('✅ تم تأكيد طلبك، وهو الآن بانتظار موافقة الإدارة.');
-        window.location.reload();
-      } catch (e) {
-        alert('❌ ' + e.message);
-      }
-    }
 
     function showError() {
       $('#loading').classList.add('hidden');
