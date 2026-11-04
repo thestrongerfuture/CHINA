@@ -197,7 +197,7 @@
     }
 
     // ---------- PRODUCT ROWS ----------
-    // دالة إضافة صف منتج مع البحث الذكي
+    // دالة إضافة صف منتج (قائمة منسدلة كاملة + بحث ذكي + لوحة مفاتيح)
     function addProductRow(selectedProductId = '', quantity = 1) {
       const container = $('#productItemsContainer');
       const row = document.createElement('div');
@@ -210,24 +210,37 @@
       const searchInput = document.createElement('input');
       searchInput.type = 'text';
       searchInput.className = 'product-search';
-      searchInput.placeholder = '🔍 ابحث بالاسم أو الرقم...';
-      searchInput.style.cssText = 'width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;';
+      searchInput.placeholder = '🔍 ابحث أو اضغط السهم...';
+      searchInput.style.cssText = 'width: 100%; padding: 10px 30px 10px 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;';
       
-      // إذا كان هناك منتج محدد مسبقاً (وضع التعديل)، نملأ الحقل باسمه
+      // إذا كان هناك منتج محدد مسبقاً (وضع التعديل)
       let selectedProduct = null;
       if (selectedProductId) {
         selectedProduct = allProducts.find(p => p.id == selectedProductId);
         if (selectedProduct) {
           searchInput.value = `#${selectedProduct.id} - ${selectedProduct.name}`;
+          searchInput.dataset.productId = selectedProductId;
         }
       }
+      
+      // أيقونة السهم (لفتح القائمة الكاملة)
+      const dropdownIcon = document.createElement('span');
+      dropdownIcon.innerHTML = '▼';
+      dropdownIcon.style.cssText = 'position: absolute; left: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; font-size: 0.7rem; padding: 5px;';
+      dropdownIcon.onclick = (e) => {
+        e.stopPropagation();
+        searchInput.value = ''; // مسح البحث لعرض الكل
+        searchInput.dataset.productId = ''; // مسح المعرف
+        showAllProducts();
+      };
       
       // قائمة النتائج المنسدلة
       const resultsList = document.createElement('div');
       resultsList.className = 'search-results';
-      resultsList.style.cssText = 'position: absolute; top: 100%; right: 0; left: 0; background: #fff; border: 1px solid #ddd; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 100; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1);';
+      resultsList.style.cssText = 'position: absolute; top: 100%; right: 0; left: 0; background: #fff; border: 1px solid #ddd; border-radius: 8px; max-height: 250px; overflow-y: auto; z-index: 100; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1);';
       
       searchWrapper.appendChild(searchInput);
+      searchWrapper.appendChild(dropdownIcon);
       searchWrapper.appendChild(resultsList);
       
       // حقل الكمية
@@ -247,19 +260,25 @@
       removeBtn.style.cssText = 'background: #fee2e2; color: #dc2626; padding: 8px; border-radius: 8px; border: none; cursor: pointer; font-weight: 700;';
       removeBtn.onclick = () => row.remove();
       
-      // البحث الفوري
-      searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim().toLowerCase();
+      // متغير لتتبع العنصر المحدد في القائمة (للوحة المفاتيح)
+      let focusedIndex = -1;
+      let currentResults = [];
+
+      // دالة عرض المنتجات (كلها أو مفلترة)
+      function renderResults(query) {
+        let filtered;
         if (!query) {
-          resultsList.style.display = 'none';
-          return;
+          // عرض جميع المنتجات
+          filtered = allProducts.slice(0, 50); // أول 50 منتج (لتحسين الأداء)
+        } else {
+          // فلترة المنتجات
+          filtered = allProducts.filter(p => 
+            String(p.id).includes(query) || 
+            p.name.toLowerCase().includes(query)
+          ).slice(0, 20);
         }
         
-        // تصفية المنتجات
-        const filtered = allProducts.filter(p => 
-          String(p.id).includes(query) || 
-          p.name.toLowerCase().includes(query)
-        ).slice(0, 20); // أول 20 نتيجة فقط
+        currentResults = filtered;
         
         if (filtered.length === 0) {
           resultsList.innerHTML = '<div style="padding: 10px; color: #999; text-align: center;">لا توجد نتائج</div>';
@@ -268,33 +287,103 @@
         }
         
         resultsList.innerHTML = '';
-        filtered.forEach(p => {
+        filtered.forEach((p, index) => {
           const item = document.createElement('div');
           item.style.cssText = 'padding: 10px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem;';
           item.textContent = `#${p.id} - ${p.name} ($${p.price})`;
-          item.onmouseover = () => item.style.background = '#f8fafc';
+          item.dataset.index = index;
+          
+          item.onmouseover = () => {
+            item.style.background = '#f8fafc';
+            focusedIndex = index;
+          };
           item.onmouseout = () => item.style.background = '#fff';
           item.onclick = () => {
             searchInput.value = `#${p.id} - ${p.name}`;
             searchInput.dataset.productId = p.id;
             resultsList.style.display = 'none';
+            focusedIndex = -1;
           };
           resultsList.appendChild(item);
         });
         resultsList.style.display = 'block';
+      }
+
+      // دالة عرض جميع المنتجات
+      function showAllProducts() {
+        renderResults('');
+        focusedIndex = -1;
+      }
+
+      // البحث الفوري (عند الكتابة)
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        searchInput.dataset.productId = ''; // مسح المعرف عند التعديل
+        renderResults(query);
+        focusedIndex = -1;
       });
-      
+
+      // فتح القائمة الكاملة عند التركيز على الحقل (إذا كان فارغاً)
+      searchInput.addEventListener('focus', () => {
+        if (!searchInput.value.trim()) {
+          showAllProducts();
+        }
+      });
+
+      // التنقل بلوحة المفاتيح
+      searchInput.addEventListener('keydown', (e) => {
+        if (resultsList.style.display === 'none') {
+          // فتح القائمة إذا كانت مغلقة
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            renderResults(searchInput.value.trim().toLowerCase());
+          }
+          return;
+        }
+
+        const items = resultsList.querySelectorAll('div[data-index]');
+        
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          focusedIndex = Math.min(focusedIndex + 1, items.length - 1);
+          highlightItem(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          focusedIndex = Math.max(focusedIndex - 1, 0);
+          highlightItem(items);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (focusedIndex >= 0 && focusedIndex < currentResults.length) {
+            const p = currentResults[focusedIndex];
+            searchInput.value = `#${p.id} - ${p.name}`;
+            searchInput.dataset.productId = p.id;
+            resultsList.style.display = 'none';
+            focusedIndex = -1;
+          }
+        } else if (e.key === 'Escape') {
+          resultsList.style.display = 'none';
+          focusedIndex = -1;
+        }
+      });
+
+      // دالة إبراز العنصر المحدد
+      function highlightItem(items) {
+        items.forEach((item, i) => {
+          if (i === focusedIndex) {
+            item.style.background = '#eff6ff';
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.style.background = '#fff';
+          }
+        });
+      }
+
       // إخفاء القائمة عند النقر خارجها
       document.addEventListener('click', (e) => {
         if (!searchWrapper.contains(e.target)) {
           resultsList.style.display = 'none';
         }
       });
-      
-      // تخزين معرف المنتج المحدد (إذا كان موجوداً)
-      if (selectedProductId) {
-        searchInput.dataset.productId = selectedProductId;
-      }
       
       row.appendChild(searchWrapper);
       row.appendChild(qtyInput);
