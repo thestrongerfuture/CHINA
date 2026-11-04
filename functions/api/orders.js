@@ -13,7 +13,8 @@
       if (!order) return jsonError('الطلب غير موجود', 404);
 
       const items = await env.DB.prepare(
-        `SELECT oi.*, p.name 
+        `SELECT oi.*, 
+                COALESCE(p.name, oi.item_name, 'عرض') as name
          FROM order_items oi 
          LEFT JOIN products p ON p.id = oi.product_id 
          WHERE oi.order_id = ?`
@@ -40,10 +41,19 @@
       if (!result.success) return jsonError('فشل إنشاء الطلب', 500);
       const orderId = result.meta.last_row_id;
 
-      const stmts = items.map(item =>
-        env.DB.prepare('INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)')
-          .bind(orderId, item.product_id, item.quantity, item.price)
-      );
+      const stmts = items.map(item => {
+        if (item.offer_id) {
+          // عرض
+          return env.DB.prepare(
+            'INSERT INTO order_items (order_id, product_id, offer_id, quantity, price, item_name) VALUES (?, NULL, ?, ?, ?, ?)'
+          ).bind(orderId, item.offer_id, item.quantity, item.price, item.item_name || 'عرض');
+        } else {
+          // منتج عادي
+          return env.DB.prepare(
+            'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)'
+          ).bind(orderId, item.product_id, item.quantity, item.price);
+        }
+      });
       await env.DB.batch(stmts);
 
       return new Response(JSON.stringify({ ok: true, order_id: orderId, message: 'تم حفظ الطلب' }), {

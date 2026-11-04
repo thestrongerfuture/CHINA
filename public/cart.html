@@ -169,38 +169,74 @@
 
         const div = document.createElement('div');
         div.className = 'cart-item';
-        div.innerHTML = `
-          <div class="cart-item-img">
-            <img src="/images/products/${item.id}.png" 
-                 onerror="if(!this.dataset.fb){this.dataset.fb='1';this.src='/images/products/${item.id}.jpg';}else{this.outerHTML='🛍️';}">
-          </div>
-          <div class="cart-item-info">
-            <div class="cart-item-name">${escapeHtml(item.name)}</div>
-            <div class="cart-item-price">$${item.price.toFixed(2)}</div>
-            <div class="cart-item-controls">
-              <button class="qty-btn" data-act="minus">−</button>
-              <span style="min-width:30px; text-align:center; font-weight:700;">${item.quantity}</span>
-              <button class="qty-btn" data-act="plus">+</button>
-              <span style="color:var(--text-muted); font-size:0.8rem; margin-right:auto;">
-                (المخزون: ${item.stock})
-              </span>
+        
+        // التحقق مما إذا كان العنصر عرضاً (Offer)
+        const isOffer = item.is_offer || String(item.id).startsWith('offer-');
+        
+        if (isOffer) {
+          // عرض الحزمة (Offer)
+          const itemsList = item.items_details ? item.items_details.split(' + ').map(d => `<li>${d}</li>`).join('') : '';
+          div.innerHTML = `
+            <div class="cart-item-img" style="background:#eff6ff;">
+              <span style="font-size:2rem;">🏷️</span>
             </div>
-          </div>
-          <button class="cart-item-remove" title="حذف">✕</button>
-        `;
+            <div class="cart-item-info">
+              <div class="cart-item-name">${escapeHtml(item.name)} <span style="background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.7rem;">عرض</span></div>
+              <ul style="font-size:0.8rem; color:var(--text-muted); margin: 4px 0; padding-right: 15px;">
+                ${itemsList}
+              </ul>
+              <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+              <div class="cart-item-controls">
+                <button class="qty-btn" data-act="minus">−</button>
+                <span style="min-width:30px; text-align:center; font-weight:700;">${item.quantity}</span>
+                <button class="qty-btn" data-act="plus">+</button>
+                <span style="color:var(--text-muted); font-size:0.8rem; margin-right:auto;">
+                  ${item.original_total ? `الأصلي: $${item.original_total.toFixed(2)}` : ''}
+                </span>
+              </div>
+            </div>
+            <button class="cart-item-remove" title="حذف">✕</button>
+          `;
+        } else {
+          // منتج عادي
+          div.innerHTML = `
+            <div class="cart-item-img">
+              <img src="/images/products/${item.id}.png" 
+                   onerror="if(!this.dataset.fb){this.dataset.fb='1';this.src='/images/products/${item.id}.jpg';}else{this.outerHTML='🛍️';}">
+            </div>
+            <div class="cart-item-info">
+              <div class="cart-item-name">${escapeHtml(item.name)}</div>
+              <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+              <div class="cart-item-controls">
+                <button class="qty-btn" data-act="minus">−</button>
+                <span style="min-width:30px; text-align:center; font-weight:700;">${item.quantity}</span>
+                <button class="qty-btn" data-act="plus">+</button>
+                <span style="color:var(--text-muted); font-size:0.8rem; margin-right:auto;">
+                  (المخزون: ${item.stock || 0})
+                </span>
+              </div>
+            </div>
+            <button class="cart-item-remove" title="حذف">✕</button>
+          `;
+        }
 
         div.querySelector('[data-act="minus"]').onclick = () => {
           const c = loadCart();
-          const it = c.find(i => i.id === item.id);
+          const it = c.find(i => String(i.id) === String(item.id));
           if (it) { it.quantity = Math.max(1, it.quantity - 1); saveCart(c); renderCart(); }
         };
         div.querySelector('[data-act="plus"]').onclick = () => {
           const c = loadCart();
-          const it = c.find(i => i.id === item.id);
-          if (it) { it.quantity = Math.min(it.stock, it.quantity + 1); saveCart(c); renderCart(); }
+          const it = c.find(i => String(i.id) === String(item.id));
+          if (it) { 
+            // إذا كان عرضاً، لا يوجد حد أقصى للمخزون (أو نضع حداً كبيراً)
+            const maxStock = it.stock || 9999;
+            it.quantity = Math.min(maxStock, it.quantity + 1); 
+            saveCart(c); renderCart(); 
+          }
         };
         div.querySelector('.cart-item-remove').onclick = () => {
-          const c = loadCart().filter(i => i.id !== item.id);
+          const c = loadCart().filter(i => String(i.id) !== String(item.id));
           saveCart(c);
           renderCart();
         };
@@ -245,7 +281,21 @@
         customer_phone: phone,
         customer_address: address,
         total: total,
-        items: cart.map(i => ({ product_id: i.id, quantity: i.quantity, price: i.price }))
+        items: cart.map(i => {
+          if (i.is_offer) {
+            // إذا كان عرضاً، نرسله مع offer_id و item_name
+            return {
+              product_id: null,
+              offer_id: parseInt(String(i.id).replace('offer-', '')),
+              quantity: i.quantity,
+              price: i.price,
+              item_name: i.name
+            };
+          } else {
+            // منتج عادي
+            return { product_id: i.id, quantity: i.quantity, price: i.price };
+          }
+        })
       };
 
       submitBtn.disabled = true;

@@ -10,83 +10,54 @@
     .page-header { text-align: center; padding: 30px 0 20px; }
     .page-header h1 { color: var(--primary); font-size: 1.8rem; }
     .page-header p { color: var(--text-muted); margin-top: 5px; }
-    .offers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding-bottom: 80px; }
+    .offers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding-bottom: 80px; }
     
     .offer-card-client {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid #f0f0f0;
+      background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      overflow: hidden; display: flex; flex-direction: column; border: 1px solid #f0f0f0;
     }
-    .offer-image { width: 100%; height: 200px; object-fit: contain; background: #f9fafb; padding: 10px; }
-    .offer-body { padding: 15px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .offer-header { padding: 15px; background: #f8fafc; border-bottom: 1px solid #eee; text-align: center; }
     .offer-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
-    .offer-details { font-size: 0.9rem; color: var(--text-muted); }
-    .offer-price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; border-top: 1px solid #eee; padding-top: 10px; }
-    .offer-old-price { text-decoration: line-through; color: #999; font-size: 0.85rem; }
+    .offer-badge { background: #10b981; color: #fff; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; display: inline-block; margin-bottom: 5px; }
+    
+    .offer-products { padding: 15px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .offer-product-item { display: flex; align-items: center; gap: 10px; background: #f9fafb; padding: 8px; border-radius: 8px; }
+    .offer-product-item img { width: 40px; height: 40px; object-fit: contain; border-radius: 6px; }
+    .offer-product-item .info { flex: 1; }
+    .offer-product-item .name { font-size: 0.85rem; font-weight: 700; }
+    .offer-product-item .qty { font-size: 0.75rem; color: var(--text-muted); }
+    
+    .offer-footer { padding: 15px; border-top: 1px solid #eee; }
+    .offer-price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .offer-old-price { text-decoration: line-through; color: #999; font-size: 0.9rem; }
     .offer-new-price { color: #10b981; font-size: 1.4rem; font-weight: 800; }
-    .offer-badge { background: #10b981; color: #fff; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; width: fit-content; }
-    .btn-add-offer { background: var(--primary); color: #fff; padding: 10px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; transition: all 0.2s; }
+    .offer-discount { background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    
+    .btn-add-offer { background: var(--primary); color: #fff; padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-add-offer:hover { background: var(--primary-dark); }
+    .btn-add-offer:disabled { background: #999; cursor: not-allowed; }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
   <header class="site-header">
     <div class="container header-inner">
-
-      <!-- الشعار + الاسم (يمين) -->
       <a href="/" class="brand">
-        <img src="/images/logo.png" alt="شعار شركة المستقبل الأقوى" class="brand-logo">
+        <img src="/images/logo.png" alt="شعار" class="brand-logo">
         <div class="brand-text">
           <span class="ar">شركة المستقبل الأقوى</span>
           <span class="en">متجر الصين</span>
         </div>
       </a>
-
-      <!-- أزرار (يسار) -->
       <div class="header-actions">
-        <!-- الخريطة -->
-        <a href="https://maps.app.goo.gl/EZ3p8wQMnWsoLa227" target="_blank" rel="noopener" class="icon-btn" style="background: #fff; color: #374151; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-          📍 <span>الخريطة</span>
-        </a>
-        
-        <!-- فيسبوك -->
-        <a href="https://www.facebook.com/tsf.co" target="_blank" rel="noopener" class="icon-btn" style="background: #fff; color: #1877F2; padding: 8px 12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          <span style="margin-right: 4px;">فيسبوك</span>
-        </a>
-
-        <!-- واتساب -->
-        <a href="https://wa.me/963956410417" target="_blank" rel="noopener" class="icon-btn whatsapp" style="background: #fff; color: #25D366; padding: 8px 12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-          <span style="margin-right: 4px;">واتساب</span>
-        </a>
-
-        <!-- شام كاش -->
-        <button class="icon-btn" id="shamCashBtn" style="background: #fff; color: #dc2626; border: none;">
-          💳 <span>شام كاش</span>
-        </button>
-
-        <!-- الإدارة -->
-        <a href="/cart.html" class="icon-btn" id="cartBtn" style="background: #fff; color: #0040C0; border: none; font-weight: 700;">
-          🛒 <span>السلة:</span>
-          <span class="cart-badge" id="cartBadge" style="background: #0040C0; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; margin-right: 4px;">0</span>
-        </a>
-
-        <!-- السلة -->
-        <a href="/admin.html" class="icon-btn" style="background: #fff; color: #374151; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-          ⚙️ <span>الإدارة</span>
+        <a href="/cart.html" class="cart-btn" id="cartBtn" style="background: #fff; color: #0040C0; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: 700; padding: 8px 16px; border-radius: 999px; display: flex; align-items: center; gap: 8px; text-decoration: none;">
+          🛒 <span>السلة</span>
+          <span class="cart-badge" id="cartBadge" style="background: #0040C0; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;">0</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- MAIN -->
   <main class="container">
     <div class="page-header">
       <h1>🏷️ العروض المتاحة</h1>
@@ -101,14 +72,12 @@
     <div class="offers-grid" id="offersGrid"></div>
   </main>
 
-  <!-- ============ BOTTOM NAVIGATION ============ -->
   <nav class="bottom-nav">
     <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></a>
     <a href="/offers.html" class="nav-item active"><span class="nav-icon">🏷️</span><span class="nav-label">العروض</span></a>
     <a href="/new.html" class="nav-item"><span class="nav-icon">✨</span><span class="nav-label">جديدنا</span></a>
   </nav>
 
-  <!-- ============ FLOATING WHATSAPP ============ -->
   <a href="https://chat.whatsapp.com/KZf6brYjicuGDrqIsiV7Ft" target="_blank" rel="noopener" class="floating-whatsapp">
     <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
     <span class="wa-tooltip">الانضمام لمجتمع الشركة</span>
@@ -123,14 +92,42 @@
       document.getElementById('cartBadge').textContent = total;
       document.getElementById('cartBadge').style.display = total > 0 ? 'inline-flex' : 'none';
     }
-    function addToCart(product, quantity) {
+    
+    // دالة إضافة عرض للسلة (كعنصر واحد)
+    function addOfferToCart(offer) {
+      // التحقق من توفر جميع المنتجات في المخزون
+      const unavailable = offer.items.find(item => item.quantity > item.product_stock);
+      if (unavailable) {
+        alert(`❌ المنتج "${unavailable.product_name}" غير متوفر بالكمية المطلوبة (المطلوب: ${unavailable.quantity}، المتاح: ${unavailable.product_stock})`);
+        return;
+      }
+
       const cart = loadCart();
-      const productId = Number(product.id);
-      const existing = cart.find(i => Number(i.id) === productId);
-      if (existing) { existing.quantity = Math.min(existing.quantity + quantity, product.stock); }
-      else { cart.push({ id: productId, name: product.name, price: Number(product.price), stock: Number(product.stock), quantity }); }
+      const offerId = `offer-${offer.id}`;
+      
+      // استخدام السعر النهائي المحسوب من الخادم
+      const originalTotal = offer.original_total || 0;
+      const finalPrice = offer.final_price || 0;
+      
+      // البحث عن العرض في السلة
+      const existing = cart.find(i => i.id === offerId);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({
+          id: offerId,
+          is_offer: true,
+          name: offer.title,
+          price: finalPrice,
+          quantity: 1,
+          items_details: offer.items.map(i => `${i.product_name} (${i.quantity})`).join(' + '),
+          original_total: originalTotal,
+          discount_percent: offer.discount_percent
+        });
+      }
+      
       saveCart(cart);
-      alert(`✅ تمت إضافة ${quantity} × ${product.name} للسلة`);
+      alert(`✅ تمت إضافة العرض "${offer.title}" للسلة بسعر $${finalPrice.toFixed(2)}`);
     }
 
     // جلب العروض
@@ -151,27 +148,56 @@
         }
 
         data.offers.forEach(o => {
+          // استخدام السعر النهائي المحسوب من الخادم
+          const originalTotal = o.original_total || 0;
+          const finalPrice = o.final_price || 0;
+          const discountPercent = o.actual_discount_percent || 0;
+          
+          // التحقق من توفر المخزون
+          const hasStock = o.items.every(item => item.quantity <= item.product_stock);
+
           const card = document.createElement('div');
           card.className = 'offer-card-client';
-          card.innerHTML = `
-            <img src="/images/products/${o.product_id}.png" class="offer-image" onerror="this.src='/images/logo.png'">
-            <div class="offer-body">
-              <span class="offer-badge">🔥 عرض خاص</span>
-              <div class="offer-title">${o.title}</div>
-              <div class="offer-details">الكمية: ${o.quantity} قطعة</div>
-              <div class="offer-price-row">
-                <div>
-                  <div class="offer-old-price">$${Number(o.original_price * o.quantity).toFixed(2)}</div>
-                  <div class="offer-new-price">$${Number(o.offer_price).toFixed(2)}</div>
-                </div>
-                <div style="font-size:0.8rem; color:#10b981; font-weight:700;">وفّر ${((1 - (o.offer_price / (o.original_price * o.quantity))) * 100).toFixed(0)}%</div>
-              </div>
-              <div style="display: flex; gap: 6px; margin-top: 10px;">
-                <button class="btn-add-offer" style="flex: 1; margin-top: 0;" onclick="addToCart({id: ${o.product_id}, name: '${o.product_name}', price: ${o.offer_price / o.quantity}, stock: ${o.product_stock}}, ${o.quantity})">🛒 أضف العرض للسلة</button>
-                <button class="btn-share-offer" style="width: 44px; background: #f1f5f9; color: #0040C0; border: none; border-radius: 8px; cursor: pointer; font-size: 1.2rem;" onclick="shareOffer(${o.id}, '${o.title}', ${o.offer_price})">🔗</button>
+          
+          // منتجات العرض
+          const productsHtml = o.items.map(item => `
+            <div class="offer-product-item">
+              <img src="/images/products/${item.product_id}.png" onerror="this.src='/images/logo.png'">
+              <div class="info">
+                <div class="name">${item.product_name}</div>
+                <div class="qty">الكمية: ${item.quantity}</div>
               </div>
             </div>
+          `).join('');
+
+          card.innerHTML = `
+            <div class="offer-header">
+              <span class="offer-badge">🔥 عرض خاص</span>
+              <div class="offer-title">${o.title}</div>
+            </div>
+            <div class="offer-products">
+              ${productsHtml}
+            </div>
+            <div class="offer-footer">
+              <div class="offer-price-row">
+                <div>
+                  <div class="offer-old-price">$${originalTotal.toFixed(2)}</div>
+                  <div class="offer-new-price">$${finalPrice.toFixed(2)}</div>
+                </div>
+                <span class="offer-discount">${discountPercent > 0 ? `وفّر ${discountPercent.toFixed(1)}%` : "عرض خاص"}</span>
+              </div>
+              <button class="btn-add-offer" ${hasStock ? '' : 'disabled'}>
+                ${hasStock ? '🛒 أضف العرض للسلة' : '❌ بعض المنتجات غير متوفرة'}
+              </button>
+            </div>
           `;
+          
+          // ربط زر الإضافة
+          const btn = card.querySelector('.btn-add-offer');
+          if (hasStock) {
+            btn.onclick = () => addOfferToCart(o);
+          }
+          
           grid.appendChild(card);
         });
 
@@ -182,73 +208,6 @@
 
     updateCartBadge();
     loadOffers();
-
-    // ============================================================
-    // مشاركة العرض
-    // ============================================================
-    let currentOffer = null;
-
-    function shareOffer(offerId, title, price) {
-      currentOffer = { id: offerId, title, price };
-      const url = `${location.origin}/offers.html#offer-${offerId}`;
-      const text = `شاهد العرض: ${title} بسعر $${price} على متجر الصين`;
-
-      document.getElementById('shareOfferWa').href = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
-      document.getElementById('shareOfferFb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-      document.getElementById('shareOfferTg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-
-      document.getElementById('shareOfferCopy').onclick = async () => {
-        try {
-          await navigator.clipboard.writeText(url);
-          alert('📋 تم نسخ رابط العرض');
-          document.getElementById('shareOfferModal').classList.add('hidden');
-        } catch (e) { alert('❌ فشل النسخ'); }
-      };
-
-      // إغلاق القائمة عند الضغط على أي زر
-      const closeMenu = () => document.getElementById('shareOfferModal').classList.add('hidden');
-      document.getElementById('shareOfferWa').addEventListener('click', closeMenu);
-      document.getElementById('shareOfferFb').addEventListener('click', closeMenu);
-      document.getElementById('shareOfferTg').addEventListener('click', closeMenu);
-
-      document.getElementById('shareOfferModal').classList.remove('hidden');
-    }
-
-    // إغلاق النافذة
-    document.getElementById('closeShareOfferModal').onclick = () => {
-      document.getElementById('shareOfferModal').classList.add('hidden');
-    };
-    document.getElementById('shareOfferModal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('shareOfferModal')) {
-        document.getElementById('shareOfferModal').classList.add('hidden');
-      }
-    });
   </script>
-
-  <!-- ============ SHARE OFFER MODAL ============ -->
-  <div class="modal-overlay hidden" id="shareOfferModal" style="z-index: 300;">
-    <div class="modal-content" style="max-width: 320px; padding: 20px;">
-      <button class="modal-close" id="closeShareOfferModal">✕</button>
-      <h3 style="color: var(--primary); margin-bottom: 20px; font-size: 1.1rem;">مشاركة العرض عبر</h3>
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <a href="#" id="shareOfferWa" target="_blank" class="btn-primary" style="background: #25D366; color: #fff; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-          واتساب
-        </a>
-        <a href="#" id="shareOfferFb" target="_blank" class="btn-primary" style="background: #1877F2; color: #fff; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          فيسبوك
-        </a>
-        <a href="#" id="shareOfferTg" target="_blank" class="btn-primary" style="background: #0088cc; color: #fff; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-          تيليجرام
-        </a>
-        <button id="shareOfferCopy" class="btn-outline" style="padding: 12px; border-radius: 8px; font-weight: 700; width: 100%;">
-          📋 نسخ الرابط
-        </button>
-      </div>
-    </div>
-  </div>
-
 </body>
 </html>

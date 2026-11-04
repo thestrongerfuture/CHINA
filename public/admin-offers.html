@@ -8,12 +8,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <style>
     .admin-page { padding: 30px 0 60px; }
-    .offer-card {
-      background: #fff; border-radius: 12px; padding: 16px;
-      margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 10px;
-    }
+    .offer-card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .offer-info { flex: 1; }
     .offer-info h4 { color: var(--primary); margin-bottom: 4px; }
     .offer-info p { font-size: 0.85rem; color: var(--text-muted); }
@@ -30,6 +25,62 @@
     .btn-add-offer { background: var(--primary); color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 1rem; border: none; cursor: pointer; width: 100%; }
     .btn-add-offer:hover { background: var(--primary-dark); }
     .btn-cancel { background: #f1f5f9; color: #475569; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: none; }
+    
+    /* تنسيقات المنتجات المتعددة */
+    .product-item-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .product-item-row select {
+      flex: 2;
+    }
+    .product-item-row input {
+      flex: 1;
+      width: 80px;
+    }
+    .btn-remove-product {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .btn-add-product {
+      background: #eff6ff;
+      color: #0040C0;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+  </style>
+
+  <style>
+    /* تنسيق حقل البحث */
+    .product-search:focus {
+      outline: none;
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 3px rgba(0, 64, 192, 0.1);
+    }
+    .search-results {
+      scrollbar-width: thin;
+    }
+    .search-results::-webkit-scrollbar {
+      width: 6px;
+    }
+    .search-results::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+    .search-results div:hover {
+      background: #f8fafc;
+    }
   </style>
 </head>
 <body>
@@ -67,25 +118,31 @@
     <div class="add-offer-form">
       <h3 id="formTitle">➕ إضافة عرض جديد</h3>
       <input type="hidden" id="editOfferId" value="">
-      <div class="form-group">
-        <label>اختر المنتج</label>
-        <select id="offerProduct">
-          <option value="">-- اختر منتجاً --</option>
-        </select>
-      </div>
+      
       <div class="form-group">
         <label>عنوان العرض</label>
-        <input type="text" id="offerTitle" placeholder="اكتب عنواناً جذاباً للعرض">
+        <input type="text" id="offerTitle" placeholder="مثال: عرض السماعة + الشاحن">
       </div>
+      
       <div class="form-group">
-        <label>الكمية المطلوبة</label>
-        <input type="number" id="offerQuantity" value="5" min="1">
+        <label>نسبة الخصم (%)</label>
+        <input type="number" id="offerDiscount" value="0" min="0" max="100" step="0.1" placeholder="مثال: 5 أو 2.5">
       </div>
+      
       <div class="form-group">
-        <label>السعر الخاص للعرض (الإجمالي)</label>
-        <input type="number" id="offerPrice" value="0" min="0" step="0.01">
+        <label>السعر اليدوي (اختياري - يتجاوز الخصم)</label>
+        <input type="number" id="offerManualPrice" value="" min="0" step="0.01" placeholder="اتركه فارغاً لاستخدام الخصم">
       </div>
-      <div style="display: flex; gap: 10px;">
+      
+      <div class="form-group">
+        <label>المنتجات المضمنة في العرض</label>
+        <div id="productItemsContainer">
+          <!-- سيتم إضافة صفوف المنتجات هنا ديناميكياً -->
+        </div>
+        <button type="button" class="btn-add-product" id="addProductBtn">➕ إضافة منتج آخر</button>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
         <button class="btn-add-offer" id="addOfferBtn" style="flex: 2;">إضافة العرض</button>
         <button id="cancelEditBtn" class="btn-cancel" style="flex: 1;">إلغاء التعديل</button>
       </div>
@@ -102,10 +159,9 @@
   <script>
     let adminPassword = sessionStorage.getItem('admin_pass') || '';
     let allProducts = [];
-
     const $ = (s) => document.querySelector(s);
 
-    // LOGIN
+    // ---------- LOGIN ----------
     $('#loginBtn').onclick = tryLogin;
     $('#passwordInput').onkeypress = (e) => { if (e.key === 'Enter') tryLogin(); };
 
@@ -114,7 +170,6 @@
       if (!pass) return;
       const errEl = $('#loginError');
       errEl.style.display = 'none';
-
       try {
         const res = await fetch('/api/products');
         if (!res.ok) throw new Error('فشل الاتصال');
@@ -130,26 +185,142 @@
     async function showAdmin() {
       $('#loginView').style.display = 'none';
       $('#adminView').style.display = 'block';
-      
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
         if (data.ok) {
           allProducts = data.products || [];
-          const select = $('#offerProduct');
-          allProducts.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.textContent = `#${p.id} - ${p.name} ($${p.price})`;
-            select.appendChild(opt);
-          });
         }
       } catch (e) { console.error(e); }
-
       loadOffers();
+      resetForm();
     }
 
-    // LOAD OFFERS
+    // ---------- PRODUCT ROWS ----------
+    // دالة إضافة صف منتج مع البحث الذكي
+    function addProductRow(selectedProductId = '', quantity = 1) {
+      const container = $('#productItemsContainer');
+      const row = document.createElement('div');
+      row.className = 'product-item-row';
+      
+      // حاوية البحث
+      const searchWrapper = document.createElement('div');
+      searchWrapper.style.cssText = 'flex: 2; position: relative;';
+      
+      const searchInput = document.createElement('input');
+      searchInput.type = 'text';
+      searchInput.className = 'product-search';
+      searchInput.placeholder = '🔍 ابحث بالاسم أو الرقم...';
+      searchInput.style.cssText = 'width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;';
+      
+      // إذا كان هناك منتج محدد مسبقاً (وضع التعديل)، نملأ الحقل باسمه
+      let selectedProduct = null;
+      if (selectedProductId) {
+        selectedProduct = allProducts.find(p => p.id == selectedProductId);
+        if (selectedProduct) {
+          searchInput.value = `#${selectedProduct.id} - ${selectedProduct.name}`;
+        }
+      }
+      
+      // قائمة النتائج المنسدلة
+      const resultsList = document.createElement('div');
+      resultsList.className = 'search-results';
+      resultsList.style.cssText = 'position: absolute; top: 100%; right: 0; left: 0; background: #fff; border: 1px solid #ddd; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 100; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1);';
+      
+      searchWrapper.appendChild(searchInput);
+      searchWrapper.appendChild(resultsList);
+      
+      // حقل الكمية
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.className = 'product-qty';
+      qtyInput.min = '1';
+      qtyInput.value = quantity;
+      qtyInput.placeholder = 'الكمية';
+      qtyInput.style.cssText = 'flex: 1; width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;';
+      
+      // زر الحذف
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn-remove-product';
+      removeBtn.textContent = '✕';
+      removeBtn.style.cssText = 'background: #fee2e2; color: #dc2626; padding: 8px; border-radius: 8px; border: none; cursor: pointer; font-weight: 700;';
+      removeBtn.onclick = () => row.remove();
+      
+      // البحث الفوري
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        if (!query) {
+          resultsList.style.display = 'none';
+          return;
+        }
+        
+        // تصفية المنتجات
+        const filtered = allProducts.filter(p => 
+          String(p.id).includes(query) || 
+          p.name.toLowerCase().includes(query)
+        ).slice(0, 20); // أول 20 نتيجة فقط
+        
+        if (filtered.length === 0) {
+          resultsList.innerHTML = '<div style="padding: 10px; color: #999; text-align: center;">لا توجد نتائج</div>';
+          resultsList.style.display = 'block';
+          return;
+        }
+        
+        resultsList.innerHTML = '';
+        filtered.forEach(p => {
+          const item = document.createElement('div');
+          item.style.cssText = 'padding: 10px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem;';
+          item.textContent = `#${p.id} - ${p.name} ($${p.price})`;
+          item.onmouseover = () => item.style.background = '#f8fafc';
+          item.onmouseout = () => item.style.background = '#fff';
+          item.onclick = () => {
+            searchInput.value = `#${p.id} - ${p.name}`;
+            searchInput.dataset.productId = p.id;
+            resultsList.style.display = 'none';
+          };
+          resultsList.appendChild(item);
+        });
+        resultsList.style.display = 'block';
+      });
+      
+      // إخفاء القائمة عند النقر خارجها
+      document.addEventListener('click', (e) => {
+        if (!searchWrapper.contains(e.target)) {
+          resultsList.style.display = 'none';
+        }
+      });
+      
+      // تخزين معرف المنتج المحدد (إذا كان موجوداً)
+      if (selectedProductId) {
+        searchInput.dataset.productId = selectedProductId;
+      }
+      
+      row.appendChild(searchWrapper);
+      row.appendChild(qtyInput);
+      row.appendChild(removeBtn);
+      container.appendChild(row);
+    }
+
+    $('#addProductBtn').onclick = () => addProductRow();
+
+    // ---------- RESET FORM ----------
+    function resetForm() {
+      $('#editOfferId').value = '';
+      $('#offerTitle').value = '';
+      $('#offerDiscount').value = '0';
+      $('#offerManualPrice').value = '';
+      $('#offerManualPrice').value = '';
+      $('#productItemsContainer').innerHTML = '';
+      addProductRow(); // صف واحد افتراضي
+      $('#formTitle').textContent = '➕ إضافة عرض جديد';
+      $('#addOfferBtn').textContent = 'إضافة العرض';
+      $('#cancelEditBtn').style.display = 'none';
+    }
+
+    $('#cancelEditBtn').onclick = resetForm;
+
+    // ---------- LOAD OFFERS ----------
     async function loadOffers() {
       const list = $('#offersList');
       const empty = $('#emptyOffers');
@@ -169,10 +340,14 @@
         data.offers.forEach(o => {
           const card = document.createElement('div');
           card.className = 'offer-card';
+          
+          // جلب منتجات العرض
+          const itemsList = (o.items || []).map(i => `#${i.product_id} (${i.quantity})`).join(' + ');
+          
           card.innerHTML = `
             <div class="offer-info">
               <h4>${o.title}</h4>
-              <p>المنتج: #${o.product_id} — الكمية: ${o.quantity} — السعر الخاص: $${Number(o.offer_price).toFixed(2)}</p>
+              <p>المنتجات: ${itemsList || 'لا توجد منتجات'} — الخصم: ${o.discount_percent}%</p>
             </div>
             <div style="display: flex; gap: 6px;">
               <button class="btn-edit-offer" data-id="${o.id}">✏️ تعديل</button>
@@ -181,18 +356,7 @@
           `;
           
           card.querySelector('.btn-delete-offer').onclick = () => deleteOffer(o.id);
-          card.querySelector('.btn-edit-offer').onclick = () => {
-            // تعبئة النموذج
-            $('#offerProduct').value = o.product_id;
-            $('#offerTitle').value = o.title;
-            $('#offerQuantity').value = o.quantity;
-            $('#offerPrice').value = o.offer_price;
-            $('#editOfferId').value = o.id;
-            $('#formTitle').textContent = '✏️ تعديل العرض';
-            $('#addOfferBtn').textContent = 'حفظ التعديلات';
-            $('#cancelEditBtn').style.display = 'block';
-            $('.add-offer-form').scrollIntoView({ behavior: 'smooth' });
-          };
+          card.querySelector('.btn-edit-offer').onclick = () => editOffer(o);
           
           list.appendChild(card);
         });
@@ -201,35 +365,63 @@
       }
     }
 
-    // إلغاء التعديل
-    $('#cancelEditBtn').onclick = () => {
-      $('#editOfferId').value = '';
-      $('#offerProduct').value = '';
-      $('#offerTitle').value = '';
-      $('#offerQuantity').value = '5';
-      $('#offerPrice').value = '0';
-      $('#formTitle').textContent = '➕ إضافة عرض جديد';
-      $('#addOfferBtn').textContent = 'إضافة العرض';
-      $('#cancelEditBtn').style.display = 'none';
-    };
+    // ---------- EDIT OFFER ----------
+    function editOffer(offer) {
+      $('#editOfferId').value = offer.id;
+      $('#offerTitle').value = offer.title;
+      $('#offerDiscount').value = offer.discount_percent || 0;
+      $('#offerManualPrice').value = offer.manual_price || '';
+      $('#offerManualPrice').value = offer.manual_price || '';
+      $('#productItemsContainer').innerHTML = '';
+      
+      // إضافة المنتجات الموجودة في العرض
+      if (offer.items && offer.items.length > 0) {
+        offer.items.forEach(item => {
+          addProductRow(item.product_id, item.quantity);
+        });
+      } else {
+        addProductRow();
+      }
+      
+      $('#formTitle').textContent = '✏️ تعديل العرض';
+      $('#addOfferBtn').textContent = 'حفظ التعديلات';
+      $('#cancelEditBtn').style.display = 'block';
+      $('.add-offer-form').scrollIntoView({ behavior: 'smooth' });
+    }
 
-    // إضافة أو تعديل
+    // ---------- SAVE OFFER (ADD/EDIT) ----------
     $('#addOfferBtn').onclick = async () => {
-      const product_id = $('#offerProduct').value;
       const title = $('#offerTitle').value.trim();
-      const quantity = parseInt($('#offerQuantity').value);
-      const offer_price = parseFloat($('#offerPrice').value);
+      const discount_percent = parseFloat($('#offerDiscount').value) || 0;
+      const manual_price = parseFloat($('#offerManualPrice').value) || null;
       const editId = $('#editOfferId').value;
+      
+      // جمع المنتجات من حقل البحث
+      const rows = $('#productItemsContainer').querySelectorAll('.product-item-row');
+      const items = [];
+      let hasEmpty = false;
+      
+      rows.forEach(row => {
+        const searchInput = row.querySelector('.product-search');
+        const productId = searchInput ? searchInput.dataset.productId : null;
+        const qty = parseInt(row.querySelector('.product-qty').value) || 1;
+        
+        if (!productId) { 
+          hasEmpty = true; 
+          return; 
+        }
+        items.push({ product_id: parseInt(productId), quantity: qty });
+      });
 
-      if (!product_id || !title || !quantity || !offer_price) {
-        alert('يرجى ملء جميع الحقول');
+      if (!title || items.length === 0 || hasEmpty) {
+        alert('يرجى ملء جميع الحقول واختيار منتج واحد على الأقل');
         return;
       }
 
       const action = editId ? 'edit' : 'add';
       const payload = editId 
-        ? { action, offer_id: parseInt(editId), title, quantity, offer_price }
-        : { action, product_id, title, quantity, offer_price };
+        ? { action, offer_id: parseInt(editId), title, discount_percent, manual_price, items }
+        : { action, title, discount_percent, manual_price, items };
 
       try {
         const res = await fetch('/api/offers', {
@@ -241,20 +433,12 @@
         if (!data.ok) throw new Error(data.error);
         
         alert(editId ? '✅ تم تعديل العرض' : '✅ تم إضافة العرض');
-        
-        // إعادة تعيين
-        $('#editOfferId').value = '';
-        $('#offerTitle').value = '';
-        $('#offerQuantity').value = '5';
-        $('#offerPrice').value = '0';
-        $('#formTitle').textContent = '➕ إضافة عرض جديد';
-        $('#addOfferBtn').textContent = 'إضافة العرض';
-        $('#cancelEditBtn').style.display = 'none';
-        
+        resetForm();
         loadOffers();
       } catch (e) { alert('❌ ' + e.message); }
     };
 
+    // ---------- DELETE OFFER ----------
     async function deleteOffer(id) {
       if (!confirm('هل أنت متأكد من حذف هذا العرض؟')) return;
       try {
