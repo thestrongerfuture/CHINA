@@ -24,7 +24,9 @@
 
       const ordersWithItems = await Promise.all(orders.results.map(async (o) => {
         const items = await env.DB.prepare(
-          `SELECT oi.*, p.name, p.stock 
+          `SELECT oi.*, 
+                  COALESCE(p.name, oi.item_name, 'عرض') as name,
+                  COALESCE(p.stock, 9999) as stock
            FROM order_items oi 
            LEFT JOIN products p ON p.id = oi.product_id 
            WHERE oi.order_id = ?`

@@ -280,15 +280,15 @@
       o.items.forEach(it => {
         itemsHtml += `
           <div class="order-item-row">
-            <span><strong>#${it.product_id}</strong> ${it.name || 'منتج'}</span>
+            <span>${it.product_id ? `<strong>#${it.product_id}</strong> ` : ''}${it.name || 'منتج'}${it.offer_id ? ' (عرض)' : ''}</span>
             <span>$${Number(it.price).toFixed(2)}</span>
             <span>
               ${isPending 
-                ? `<input type="number" class="qty-input" data-pid="${it.product_id}" min="1" max="${it.stock || 999}" value="${it.quantity}">`
+                ? `<input type="number" class="qty-input" data-pid="${it.product_id || ''}" data-oid="${it.offer_id || ''}" min="1" max="${it.stock || 999}" value="${it.quantity}">`
                 : `<strong>${it.quantity}</strong>`
               }
             </span>
-            <span style="color:var(--text-muted); font-size:0.8rem;">متاح: ${it.stock ?? '?'}</span>
+            <span style="color:var(--text-muted); font-size:0.8rem;">${it.product_id ? `متاح: ${it.stock ?? '?'}` : 'عرض'}</span>
           </div>
         `;
       });
