@@ -59,24 +59,53 @@
 
         const itemsToUse = items || orderItems.results;
 
-        // التحقق من المخزون
-        for (const it of itemsToUse) {
-          const p = await env.DB.prepare('SELECT stock, name FROM products WHERE id = ?')
-            .bind(it.product_id).first();
-          if (!p) return jsonError(`المنتج ${it.product_id} غير موجود`, 400);
-          if (p.stock < it.quantity) {
-            return jsonError(`المخزون غير كافٍ للمنتج "${p.name}" (المطلوب: ${it.quantity}, المتاح: ${p.stock})`, 400);
-          }
-        }
-
-        // تنفيذ التحديثات (batch)
+        // التحقق من المخزون وخصمه (مع دعم العروض)
         const stmts = [];
         for (const it of itemsToUse) {
-          stmts.push(env.DB.prepare('UPDATE products SET stock = stock - ? WHERE id = ?')
-            .bind(it.quantity, it.product_id));
-          stmts.push(env.DB.prepare('UPDATE order_items SET quantity = ? WHERE order_id = ? AND product_id = ?')
-            .bind(it.quantity, order_id, it.product_id));
+          if (it.offer_id) {
+            // إذا كان عرضاً، نجلب منتجاته ونخصم مخزونها
+            const offerItems = await env.DB.prepare(
+              'SELECT product_id, quantity FROM offer_items WHERE offer_id = ?'
+            ).bind(it.offer_id).all();
+            
+            for (const oi of offerItems.results) {
+              const p = await env.DB.prepare('SELECT stock, name FROM products WHERE id = ?')
+                .bind(oi.product_id).first();
+              if (!p) return jsonError(`منتج في العرض (${oi.product_id}) غير موجود`, 400);
+              
+              // حساب الكمية المطلوبة: كمية العرض × كمية المنتج داخل العرض
+              const requiredQty = oi.quantity * it.quantity;
+              
+              if (p.stock < requiredQty) {
+                return jsonError(`المخزون غير كافٍ للمنتج "${p.name}" (المطلوب: ${requiredQty}, المتاح: ${p.stock})`, 400);
+              }
+              
+              // خصم المخزون
+              stmts.push(env.DB.prepare('UPDATE products SET stock = stock - ? WHERE id = ?')
+                .bind(requiredQty, oi.product_id));
+            }
+            
+            // تحديث كمية العرض في الطلب
+            stmts.push(env.DB.prepare('UPDATE order_items SET quantity = ? WHERE order_id = ? AND offer_id = ?')
+              .bind(it.quantity, order_id, it.offer_id));
+              
+          } else {
+            // منتج عادي
+            const p = await env.DB.prepare('SELECT stock, name FROM products WHERE id = ?')
+              .bind(it.product_id).first();
+            if (!p) return jsonError(`المنتج ${it.product_id} غير موجود`, 400);
+            if (p.stock < it.quantity) {
+              return jsonError(`المخزون غير كافٍ للمنتج "${p.name}" (المطلوب: ${it.quantity}, المتاح: ${p.stock})`, 400);
+            }
+            
+            // خصم المخزون
+            stmts.push(env.DB.prepare('UPDATE products SET stock = stock - ? WHERE id = ?')
+              .bind(it.quantity, it.product_id));
+            stmts.push(env.DB.prepare('UPDATE order_items SET quantity = ? WHERE order_id = ? AND product_id = ?')
+              .bind(it.quantity, order_id, it.product_id));
+          }
         }
+        
         stmts.push(env.DB.prepare("UPDATE orders SET status = 'approved' WHERE id = ?")
           .bind(order_id));
 

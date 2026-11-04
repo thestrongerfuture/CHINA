@@ -326,10 +326,24 @@
     // ---------- APPROVE ----------
     async function approveOrder(o, card) {
       const inputs = card.querySelectorAll('.qty-input');
-      const items = Array.from(inputs).map(inp => ({
-        product_id: parseInt(inp.dataset.pid),
-        quantity: parseInt(inp.value)
-      }));
+      const items = Array.from(inputs).map(inp => {
+        const productId = inp.dataset.pid;
+        const offerId = inp.dataset.oid;
+        
+        if (offerId && offerId !== 'null' && offerId !== '') {
+          // عرض
+          return {
+            offer_id: parseInt(offerId),
+            quantity: parseInt(inp.value)
+          };
+        } else {
+          // منتج عادي
+          return {
+            product_id: parseInt(productId),
+            quantity: parseInt(inp.value)
+          };
+        }
+      });
 
       if (!confirm(`هل أنت متأكد من الموافقة على الطلب #${o.id}؟\nسيتم خصم الكميات من المخزون.`)) return;
 
