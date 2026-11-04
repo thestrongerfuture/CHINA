@@ -140,6 +140,132 @@
       }
     }
   </style>
+
+  <style>
+    /* توسيط جدول الفاتورة في الطباعة */
+    @media print {
+      .invoice-table {
+        width: 100% !important;
+        margin: 0 auto !important;
+        table-layout: fixed !important;
+      }
+      
+      .invoice-table th,
+      .invoice-table td {
+        text-align: center !important;
+        padding: 4px 2px !important;
+        word-wrap: break-word !important;
+        font-size: 9pt !important;
+      }
+      
+      /* تخصيص عرض الأعمدة */
+      .invoice-table th:nth-child(1), .invoice-table td:nth-child(1) { width: 40% !important; }
+      .invoice-table th:nth-child(2), .invoice-table td:nth-child(2) { width: 15% !important; }
+      .invoice-table th:nth-child(3), .invoice-table td:nth-child(3) { width: 20% !important; }
+      .invoice-table th:nth-child(4), .invoice-table td:nth-child(4) { width: 25% !important; }
+      
+      /* توسيط الجدول داخل الصفحة */
+      .invoice-box {
+        padding: 10px !important;
+      }
+      
+      /* على ورق الكاشير (80mm) */
+      @media (max-width: 80mm) {
+        .invoice-table th, .invoice-table td {
+          font-size: 8pt !important;
+          padding: 2px 1px !important;
+        }
+        .invoice-table th:nth-child(1), .invoice-table td:nth-child(1) { width: 35% !important; }
+        .invoice-table th:nth-child(2), .invoice-table td:nth-child(2) { width: 15% !important; }
+        .invoice-table th:nth-child(3), .invoice-table td:nth-child(3) { width: 25% !important; }
+        .invoice-table th:nth-child(4), .invoice-table td:nth-child(4) { width: 25% !important; }
+      }
+    }
+  </style>
+
+  <style>
+    /* ============================================================
+       تنسيق الطباعة على ورق حراري 80mm (بدون هوامش، صفحة واحدة)
+       ============================================================ */
+    @media print and (max-width: 80mm) {
+      /* 1. إلغاء الهوامش من الصفحة */
+      @page {
+        margin: 0 !important;
+        size: 80mm auto !important; /* عرض 80mm، والطول تلقائي */
+      }
+      
+      body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      
+      /* 2. إخفاء العناصر غير الضرورية */
+      .site-header, .bottom-nav, .floating-whatsapp, .invoice-actions, .btn-print, .btn-back, .no-print {
+        display: none !important;
+      }
+      
+      /* 3. جعل الحاوية تملأ العرض بالكامل */
+      .invoice-page {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+      
+      .invoice-box {
+        padding: 2mm !important; /* حشو بسيط جداً */
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      
+      /* 4. تصغير الخطوط والمسافات */
+      .invoice-header {
+        padding-bottom: 2mm !important;
+        margin-bottom: 2mm !important;
+        border-bottom: 1px solid #000 !important;
+      }
+      
+      .invoice-header img {
+        width: 30px !important;
+        height: 30px !important;
+      }
+      
+      .invoice-title {
+        font-size: 12pt !important;
+      }
+      
+      .invoice-meta {
+        font-size: 8pt !important;
+        gap: 2mm !important;
+        margin-bottom: 2mm !important;
+      }
+      
+      .invoice-table th,
+      .invoice-table td {
+        font-size: 7pt !important;
+        padding: 1mm !important;
+        text-align: center !important;
+      }
+      
+      .invoice-total .total-row {
+        font-size: 10pt !important;
+        padding-top: 1mm !important;
+      }
+      
+      /* 5. منع انقسام الصفحات */
+      .invoice-box, .invoice-table, .invoice-header, .invoice-meta, .invoice-total {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
