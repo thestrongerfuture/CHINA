@@ -1,7 +1,7 @@
-﻿name = "china-tsf"
+﻿name = "sp-tsf"
 compatibility_date = "2024-01-01"
-main = "functions/api/products.js"
+pages_build_output_dir = "public"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "china-db"
+database_name = "sp-db"
