@@ -272,7 +272,9 @@
       const card = document.createElement('div');
       card.className = 'order-card';
 
-      const date = new Date(o.created_at).toLocaleString('ar-EG');
+      const date = new Date(o.created_at);
+      const syriaDate = new Date(date.getTime() + (3 * 60 * 60 * 1000));
+      const dateStr = syriaDate.toLocaleString('ar-EG', { timeZone: 'Asia/Damascus' });
       const isPending = o.status === 'pending';
       const statusLabels = { pending: 'معلقة', approved: 'موافق عليها', rejected: 'مرفوضة' };
 
@@ -299,7 +301,7 @@
             <strong>طلب #${o.id}</strong>
             <span>👤 ${o.customer_name} — 📞 ${o.customer_phone}</span>
             ${o.customer_address ? `<span>📍 ${o.customer_address}</span>` : ''}
-            <span style="color:var(--text-muted); font-size:0.8rem;">🕒 ${date}</span>
+            <span style="color:var(--text-muted); font-size:0.8rem;">🕒 ${dateStr}</span>
           </div>
           <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
             <span class="status-badge status-${o.status}">${statusLabels[o.status]}</span>

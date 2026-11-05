@@ -374,7 +374,10 @@
 
       // تعبئة البيانات
       $('#invId').textContent = `#${o.id}`;
-      $('#invDate').textContent = new Date(o.created_at).toLocaleString('ar-EG');
+      // تحويل التوقيت من UTC إلى توقيت سوريا (UTC+3)
+      const date = new Date(o.created_at);
+      const syriaDate = new Date(date.getTime() + (3 * 60 * 60 * 1000)); // إضافة 3 ساعات
+      $('#invDate').textContent = syriaDate.toLocaleString('ar-EG', { timeZone: 'Asia/Damascus' });
       $('#invName').textContent = o.customer_name;
       $('#invPhone').textContent = o.customer_phone;
       $('#invAddress').textContent = o.customer_address || '—';

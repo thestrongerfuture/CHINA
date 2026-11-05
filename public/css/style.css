@@ -1914,3 +1914,62 @@ body.modal-open {
     height: 20px !important;
   }
 }
+
+/* تغيير شكل المؤشر على أشرطة التمرير القابلة للسحب */
+.brand-buttons, .category-bar .container {
+  cursor: grab;
+}
+.brand-buttons:active, .category-bar .container:active {
+  cursor: grabbing;
+}
+
+/* تلميح بصري لأشرطة التمرير الأفقية */
+.brand-buttons::after,
+.category-bar .container::after {
+  content: '';
+  display: block;
+  min-width: 1px;
+}
+
+/* ============================================================
+   إعادة شريط التمرير الأفقي (المرئي) على الكمبيوتر
+   ============================================================ */
+
+/* 1. شريط الماركات والأقسام: إظهار شريط التمرير على الكمبيوتر */
+@media (min-width: 769px) {
+  .brand-buttons,
+  .category-bar .container {
+    overflow-x: auto !important; /* السماح بالتمرير الأفقي */
+    scrollbar-width: thin !important; /* شريط رفيع في Firefox */
+    scrollbar-color: var(--primary) #f1f5f9 !important; /* لون الشريط */
+  }
+  
+  /* تخصيص شريط التمرير في كروم وسفاري */
+  .brand-buttons::-webkit-scrollbar,
+  .category-bar .container::-webkit-scrollbar {
+    height: 6px !important; /* ارتفاع الشريط */
+  }
+  .brand-buttons::-webkit-scrollbar-track,
+  .category-bar .container::-webkit-scrollbar-track {
+    background: #f1f5f9 !important;
+    border-radius: 10px !important;
+  }
+  .brand-buttons::-webkit-scrollbar-thumb,
+  .category-bar .container::-webkit-scrollbar-thumb {
+    background: var(--primary) !important;
+    border-radius: 10px !important;
+  }
+}
+
+/* 2. على الموبايل: إخفاء شريط التمرير (لأنه يعمل باللمس) */
+@media (max-width: 768px) {
+  .brand-buttons,
+  .category-bar .container {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  .brand-buttons::-webkit-scrollbar,
+  .category-bar .container::-webkit-scrollbar {
+    display: none !important;
+  }
+}
